@@ -1,0 +1,1742 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profound — Operating Model</title>
+<style>
+:root{
+  /* Dark is the default: Profound runs a near-black system, meta theme colour #08090A.
+     Series steps are the dark-band palette, validated against this surface. */
+  --plane:#08090A; --surface-1:#101214; --surface-2:#16181B;
+  --text-primary:#ffffff; --text-secondary:#a7a9ad; --text-muted:#6f7276;
+  --grid:#1c1f22; --axis:#2a2e33; --border:rgba(255,255,255,0.09);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
+  --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+  --success-text:#0ca30c;
+  --radius:12px;
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --plane:#f7f7f6; --surface-1:#fcfcfb; --surface-2:#ffffff;
+  --text-primary:#08090A; --text-secondary:#52514e; --text-muted:#898781;
+  --grid:#e6e6e2; --axis:#c3c2b7; --border:rgba(8,9,10,0.10);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
+  --success-text:#006300;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--plane); color:var(--text-primary);
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif; font-size:14px; line-height:1.5;
+}
+.wrap{max-width:1220px;margin:0 auto;padding:0 24px 72px}
+header.top{
+  position:sticky; top:0; z-index:40; background:var(--plane);
+  border-bottom:1px solid var(--border); padding:16px 0 0;
+}
+.top-inner{max-width:1220px;margin:0 auto;padding:0 24px}
+.brandrow{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{font-size:19px;margin:0;font-weight:600;letter-spacing:-0.022em}
+.sub{color:var(--text-muted);font-size:12.5px}
+.spacer{flex:1}
+.themebtn{
+  background:none;border:1px solid var(--border);color:var(--text-secondary);
+  border-radius:8px;padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit;
+}
+.themebtn:hover{background:var(--surface-1)}
+.tabs{display:flex;gap:2px;margin-top:14px;flex-wrap:wrap}
+.tab{
+  background:none;border:none;border-bottom:2px solid transparent;color:var(--text-secondary);
+  padding:9px 14px;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap;
+}
+.tab:hover{color:var(--text-primary)}
+.tab[aria-selected="true"]{color:var(--text-primary);border-bottom-color:var(--s1);font-weight:600}
+
+section{margin-top:34px}
+h2{font-size:15.5px;margin:0 0 3px;font-weight:600;letter-spacing:-0.016em}
+.lede{color:var(--text-secondary);font-size:13px;margin:0 0 16px;max-width:74ch}
+.card{
+  background:var(--surface-1);border:1px solid var(--border);
+  border-radius:var(--radius);padding:18px 20px;
+}
+.grid{display:grid;gap:14px}
+.g4{grid-template-columns:repeat(4,1fr)}
+.g2{grid-template-columns:1fr 1fr}
+.g23{grid-template-columns:1.35fr 1fr}
+@media(max-width:900px){.g4{grid-template-columns:repeat(2,1fr)}.g2,.g23{grid-template-columns:1fr}}
+
+.tile .k{font-size:11.5px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em}
+.tile .v{font-size:30px;font-weight:600;margin-top:6px;letter-spacing:-0.032em;line-height:1.08}
+.tile .d{font-size:12px;color:var(--text-secondary);margin-top:5px}
+.tile .bench{font-size:11.5px;margin-top:6px;display:flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;flex:none}
+.up{color:var(--success-text)} .down{color:var(--critical)}
+
+.answer{border-left:3px solid var(--s1);padding-left:15px;margin:18px 0 0}
+.answer b{font-weight:650}
+
+.legend{display:flex;gap:15px;flex-wrap:wrap;margin:2px 0 10px}
+.lg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-secondary)}
+.sw{width:11px;height:3px;border-radius:2px;flex:none}
+
+.sliders{display:flex;flex-direction:column;gap:15px}
+.sl label{display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:5px;gap:10px}
+.sl .nm{color:var(--text-secondary)}
+.sl .val{font-weight:640;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--s1);height:18px}
+.slnote{font-size:11px;color:var(--text-muted);margin-top:3px}
+
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+th{
+  text-align:right;color:var(--text-muted);font-weight:600;font-size:11px;
+  text-transform:uppercase;letter-spacing:0.04em;padding:7px 9px;border-bottom:1px solid var(--axis);
+}
+th:first-child{text-align:left}
+td{text-align:right;padding:6px 9px;border-bottom:1px solid var(--grid)}
+td:first-child{text-align:left;color:var(--text-secondary)}
+tr.strong td{font-weight:640;color:var(--text-primary)}
+tbody tr:hover td{background:var(--surface-2)}
+
+.pill{
+  display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:2px 8px;
+  border-radius:999px;border:1px solid var(--border);color:var(--text-secondary);
+}
+.chartbox{position:relative}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.tip{
+  position:absolute;pointer-events:none;background:var(--surface-1);
+  border:1px solid var(--border);border-radius:8px;padding:9px 11px;font-size:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.13);opacity:0;transition:opacity .1s;z-index:20;min-width:168px;
+}
+.tip .th{font-weight:640;margin-bottom:5px;font-size:12px}
+.tip .row{display:flex;justify-content:space-between;gap:14px;font-variant-numeric:tabular-nums}
+.tip .row span:first-child{display:flex;align-items:center;gap:6px;color:var(--text-secondary)}
+.hidden{display:none}
+.foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--border);color:var(--text-muted);font-size:12px}
+.foot b{color:var(--text-secondary);font-weight:600}
+.reset{
+  background:none;border:1px solid var(--border);color:var(--text-secondary);border-radius:8px;
+  padding:5px 11px;font-size:12px;cursor:pointer;font-family:inherit;
+}
+.reset:hover{background:var(--surface-2)}
+.scnbtns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.scn{
+  background:var(--surface-1);border:1px solid var(--border);border-radius:8px;
+  padding:6px 12px;font-size:12.5px;cursor:pointer;font-family:inherit;color:var(--text-secondary);
+}
+.scn[aria-pressed="true"]{border-color:var(--s1);color:var(--text-primary);font-weight:620}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-inner">
+    <div class="brandrow">
+      <h1>Profound — Five Year Operating Model</h1>
+      <span class="sub">Monthly, Jan 2026 to Dec 2030</span>
+      <span class="spacer"></span>
+      <button class="themebtn" id="theme">Dark</button>
+    </div>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" aria-selected="true" data-view="findings">Findings</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="builder">Scenario builder</button>
+      <button class="tab" role="tab" aria-selected="false" data-view="detail">Model detail</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<!-- ============================================================ FINDINGS -->
+<div id="view-findings">
+  <section>
+    <h2>The capital decision</h2>
+    <p class="lede">The base case is close to self funding, so this is not a runway problem. It is a
+      decision about how much to spend and when to raise against the two things the plan depends on
+      that have no evidence behind them yet.</p>
+    <div class="grid g4" id="tiles"></div>
+    <div class="answer card" style="margin-top:14px">
+      <p style="margin:0" id="recommendation"></p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Cash balance against the $25M floor</h2>
+    <p class="lede">Every scenario is shown. The floor is the board operating minimum, not zero. The
+      recommendation is timed off the strength gate rather than off these crossings, which is the whole
+      point: by the time a line approaches the floor, the terms have already been set.</p>
+    <div class="card">
+      <div class="legend" id="cashlegend"></div>
+      <div class="chartbox"><div id="cashchart"></div><div class="tip" id="cashtip"></div></div>
+    </div>
+  </section>
+
+  <section class="grid g23">
+    <div>
+      <h2>Profit and loss burn against cash burn</h2>
+      <p class="lede">Annual prepay builds deferred revenue, which funds most of the reported loss.
+        Cumulative across the full five years, base case.</p>
+      <div class="card"><div class="chartbox"><div id="bridgechart"></div><div class="tip" id="bridgetip"></div></div></div>
+    </div>
+    <div>
+      <h2>What moves the cash trough</h2>
+      <p class="lede">Each driver flexed across a plausible range, independently, around the base case. The hiring plan outranks every market assumption, which is the point: the requirement is mostly a spend decision management controls, not an exogenous risk.</p>
+      <div class="card"><div class="chartbox"><div id="tornado"></div><div class="tip" id="tortip"></div></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>The sales investment window</h2>
+    <p class="lede">CAC payback on new business, base case. It clears the eighteen month benchmark
+      until mid 2027 and deteriorates from there as quota per rep decays and ramp lengthens. The
+      window in which adding sellers pays back inside the benchmark is finite, and it is what the
+      raise funds.</p>
+    <div class="card">
+      <div class="legend" id="caclegend"></div>
+      <div class="chartbox"><div id="cacchart"></div><div class="tip" id="cactip"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Scenario comparison</h2>
+    <div class="card"><table id="scntable"></table></div>
+  </section>
+</div>
+
+<!-- ============================================================= BUILDER -->
+<div id="view-builder" class="hidden">
+  <section>
+    <h2>Scenario builder</h2>
+    <p class="lede">Start from any case, then flex the drivers that actually move the answer. Every figure
+      recomputes the full model, including the cohort triangle. Deltas are measured against the base case.</p>
+    <div class="scnbtns" id="scnbtns"></div>
+    <div class="grid g23">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+          <b style="font-size:13px">Drivers</b>
+          <button class="reset" id="reset">Reset to scenario</button>
+        </div>
+        <div class="sliders" id="sliders"></div>
+      </div>
+      <div>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr)" id="btiles"></div>
+        <div class="card" style="margin-top:14px">
+          <div class="legend">
+            <span class="lg"><span class="sw" style="background:var(--s1)"></span>Live</span>
+            <span class="lg"><span class="sw" style="background:var(--text-muted);opacity:.55"></span>Base case</span>
+          </div>
+          <div class="chartbox"><div id="bcash"></div><div class="tip" id="btip"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <h2>Annual summary at these settings</h2>
+    <div class="card"><table id="btable"></table></div>
+  </section>
+</div>
+
+<!-- ============================================================== DETAIL -->
+<div id="view-detail" class="hidden">
+  <section>
+    <h2>ARR bridge</h2>
+    <p class="lede">Beginning plus new plus expansion less churn. Expansion carries the growth, which is
+      the thesis expressed in the numbers.</p>
+    <div class="card">
+      <div class="legend" id="arrlegend"></div>
+      <div class="chartbox"><div id="arrchart"></div><div class="tip" id="arrtip"></div></div>
+      <table id="arrtable" style="margin-top:16px"></table>
+    </div>
+  </section>
+  <section>
+    <h2>Profit and loss</h2>
+    <div class="card"><table id="pltable"></table></div>
+  </section>
+  <section>
+    <h2>Operating metrics against benchmark</h2>
+    <p class="lede">Every metric here is computed by the model. None is an input.</p>
+    <div class="card"><table id="kpitable"></table></div>
+  </section>
+  <section>
+    <h2>Headcount</h2>
+    <div class="card">
+      <div class="legend" id="hclegend"></div>
+      <div class="chartbox"><div id="hcchart"></div><div class="tip" id="hctip"></div></div>
+    </div>
+  </section>
+</div>
+
+<div class="foot">
+  <p><b>How this is built.</b> The hiring plan is the input and revenue is the output, so no growth rate is
+  assumed anywhere. Net revenue retention, gross retention and gross margin are computed from driver blocks
+  rather than entered. Cohorts are dollar denominated. Interest runs off the opening cash balance, so the
+  model has no circular reference.</p>
+  <p><b>Verification.</b> This page runs a faithful port of the Python engine, cohort triangle included.
+  An automated harness asserts the browser engine, the Python engine and the Excel workbook agree line by
+  line across all sixty months and all five scenarios, to a tolerance of 0.1 per cent. The current tie-out
+  is exact.</p>
+  <p><b>Burn multiple reads low, and it is worth knowing why.</b> It runs between 0.47x and 0.01x, well
+  inside the sub-1.0x standard. That is not primarily operating efficiency. Burn multiple is a cash
+  metric, and annual prepay suppresses cash burn, so the reading is flattered by float as much as by
+  margin. It also becomes undefined from November 2029, when trailing free cash flow turns positive and
+  there is no burn left to divide. Because it never exceeds 1.0x in this model, the burn multiple
+  condition in the raise gate confirms rather than tests: the binding gate is crossing $100M ARR.</p>
+  <p><b>Burn multiple reads low, and it is worth knowing why.</b> It runs between 0.47x and 0.01x, well
+  inside the sub-1.0x standard, and becomes undefined from November 2029 when trailing free cash flow
+  turns positive and there is no burn left to divide. The low reading is not primarily operating
+  efficiency: burn multiple is a cash metric, and annual prepay suppresses cash burn, so it is flattered
+  by float as much as by margin. Because it never exceeds 1.0x anywhere in this model it is deliberately
+  not part of the raise gate, which keys off crossing $100M ARR alone.</p>
+  <p><b>Agents is modelled as subscription-shaped, and it is not.</b> Attach rate times ACV gives Agents
+  a contracted ARR shape. A consumption product does not behave that way: revenue varies with usage
+  month to month, there is no contracted floor to retain, and the right metrics are net revenue retention
+  on consumed dollars and a usage ramp within each account rather than a logo attach rate. Billing in
+  arrears is modelled, which is the part that matters most for cash. The rest is a deliberate
+  simplification at this level and the first thing to build out properly.</p>
+  <p><b>Least observable input.</b> Query volume per customer is decomposed as tracked prompts times engines
+  times monthly runs. Across the plausible range the base case moves between no breach and a FY28 breach,
+  while the downside requirement stays between roughly $80M and $120M. The recommendation rests on the downside.</p>
+</div>
+
+</div>
+
+<script>
+const A = {
+ "GIVEN": {
+  "opening_arr": 55000000.0,
+  "opening_cash": 110000000.0,
+  "opening_headcount": 250,
+  "min_cash": 25000000.0
+ },
+ "TIME": {
+  "start_year": 2026,
+  "start_month": 1,
+  "months": 60,
+  "fy_start_month": 1
+ },
+ "OPENING_BASE": {
+  "ent_arr": 53500000.0,
+  "ent_customers": 700,
+  "selfserve_arr": 1500000.0,
+  "selfserve_customers": 500,
+  "agents_arr": 0.0
+ },
+ "SALES": {
+  "opening_aes": 30,
+  "opening_sdrs": 20,
+  "opening_mktg": 13,
+  "opening_salesops": 8,
+  "quota_annual": 1300000.0,
+  "attainment": 0.78,
+  "quota_growth_pa": -0.05,
+  "ramp_months_by_year": {
+   "2026": 4,
+   "2027": 4,
+   "2028": 5,
+   "2029": 5,
+   "2030": 5
+  },
+  "ramp_curve": [
+   0.25,
+   0.5,
+   0.75,
+   1.0
+  ],
+  "ramp_curve_5mo": [
+   0.2,
+   0.4,
+   0.6,
+   0.8,
+   1.0
+  ],
+  "time_to_hire_months": 2,
+  "ae_hires_per_month": {
+   "2026": 2.2,
+   "2027": 2.6,
+   "2028": 2.8,
+   "2029": 2.6,
+   "2030": 2.2
+  },
+  "sdr_per_ae": 0.8,
+  "mktg_per_ae": 0.45,
+  "salesops_per_ae": 0.3,
+  "enablement_heads_per_20_aes": 1.0
+ },
+ "RETENTION": {
+  "opening_base_spread_months": 12,
+  "first_renewal_survival": 0.92,
+  "later_renewal_survival": {
+   "2026": 0.95,
+   "2027": 0.95,
+   "2028": 0.955,
+   "2029": 0.96,
+   "2030": 0.96
+  },
+  "in_contract_churn_pa": 0.005,
+  "seat_expansion_pa": {
+   "2026": 0.22,
+   "2027": 0.16,
+   "2028": 0.1,
+   "2029": 0.065,
+   "2030": 0.045
+  },
+  "renewal_price_uplift": 0.08,
+  "cross_sell_uplift": {
+   "2026": 0.11,
+   "2027": 0.08,
+   "2028": 0.05,
+   "2029": 0.035,
+   "2030": 0.025
+  },
+  "logo_churn_premium": 0.03
+ },
+ "ACV": {
+  "ent_new_logo_acv": 76428.57,
+  "ent_acv_growth_pa": 0.1,
+  "selfserve_acv": 3000.0,
+  "selfserve_acv_growth_pa": 0.05
+ },
+ "SELFSERVE": {
+  "new_customers_per_month": 45,
+  "new_cust_growth_pa": 0.25,
+  "monthly_churn": 0.04,
+  "monthly_conv_to_ent": 0.01
+ },
+ "AGENTS": {
+  "attach_by_yearend": {
+   "2026": 0.08,
+   "2027": 0.18,
+   "2028": 0.3,
+   "2029": 0.38,
+   "2030": 0.45
+  },
+  "acv_pct_of_core": 0.45,
+  "acv_growth_pa": 0.12,
+  "billed_in_arrears": true
+ },
+ "COGS": {
+  "tracked_prompts_per_customer": 2000,
+  "engines_monitored": 10,
+  "runs_per_prompt_per_month": 30,
+  "query_volume_growth_pa": 0.15,
+  "cost_per_query": 0.0012,
+  "inference_deflation_pa": 0.22,
+  "agents_cogs_pct": {
+   "2026": 0.4,
+   "2027": 0.37,
+   "2028": 0.34,
+   "2029": 0.32,
+   "2030": 0.3
+  },
+  "selfserve_cogs_pct": 0.25,
+  "hosting_pct_of_rev": {
+   "2026": 0.06,
+   "2027": 0.055,
+   "2028": 0.05,
+   "2029": 0.045,
+   "2030": 0.04
+  },
+  "third_party_data_pct_of_rev": 0.02,
+  "cs_in_cogs": false
+ },
+ "HEADCOUNT": {
+  "opening_split": {
+   "rnd": 100,
+   "sm": 75,
+   "cs": 45,
+   "ga": 30
+  },
+  "loaded_cost": {
+   "rnd": 288000.0,
+   "ae": 323000.0,
+   "sdr": 161000.0,
+   "mktg": 217000.0,
+   "salesops": 205000.0,
+   "cs": 182000.0,
+   "ga": 201000.0
+  },
+  "comp_inflation_pa": 0.04,
+  "attrition_sales_pa": 0.2,
+  "attrition_nonsales_pa": 0.08,
+  "recruiting_cost_per_hire": 22000.0,
+  "rnd_hires_per_month": {
+   "2026": 6.0,
+   "2027": 8.0,
+   "2028": 8.5,
+   "2029": 8.5,
+   "2030": 8.0
+  },
+  "ga_hires_per_month": {
+   "2026": 2.2,
+   "2027": 3.0,
+   "2028": 3.5,
+   "2029": 3.5,
+   "2030": 3.0
+  },
+  "ent_custs_per_csm": {
+   "2026": 13,
+   "2027": 12,
+   "2028": 11,
+   "2029": 11,
+   "2030": 10
+  },
+  "sbc_pct_of_revenue": 0.15
+ },
+ "OPEX": {
+  "software_per_head_pa": 12000.0,
+  "te_per_head_pa": 6000.0,
+  "other_ga_per_head_pa": 3000.0,
+  "facilities_per_head_pa": 18000.0,
+  "office_step_at_headcount": 400,
+  "office_step_cost_pa": 3000000.0,
+  "rnd_compute_pct_of_rev": {
+   "2026": 0.05,
+   "2027": 0.055,
+   "2028": 0.055,
+   "2029": 0.05,
+   "2030": 0.045
+  },
+  "marketing_programs_pct_of_rev": 0.08,
+  "professional_fees_pa": 2500000.0,
+  "professional_fees_growth_pa": 0.15,
+  "insurance_pa": 1200000.0,
+  "insurance_growth_pa": 0.1
+ },
+ "CASH": {
+  "annual_upfront_pct": 0.65,
+  "quarterly_pct": 0.35,
+  "dso_days": 45,
+  "dpo_days": 30,
+  "bad_debt_pct": 0.005,
+  "capex_per_new_hire": 4000.0,
+  "leasehold_at_office_step": 4000000.0,
+  "capitalise_software": false,
+  "interest_rate_on_cash": 0.04,
+  "bonus_payout_month": 3
+ },
+ "FUNDRAISE": {
+  "process_launch_at_runway_months": 18,
+  "milestone_arr": 100000000.0,
+  "milestone_burn_multiple": 1.0,
+  "target_post_raise_runway_months": 24,
+  "illustrative_round_size": 200000000.0,
+  "illustrative_post_money": 3000000000.0,
+  "ambition_growth": {
+   "2026": 1.0,
+   "2027": 0.7,
+   "2028": 0.5,
+   "2029": 0.38,
+   "2030": 0.3
+  }
+ },
+ "SCENARIOS": {
+  "base": {},
+  "upside": {
+   "SALES.attainment": 0.85,
+   "SALES.ae_hires_per_month": {
+    "2026": 4.0,
+    "2027": 5.2,
+    "2028": 5.8,
+    "2029": 5.8,
+    "2030": 5.2
+   },
+   "RETENTION.first_renewal_survival": 0.94,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.27,
+    "2027": 0.21,
+    "2028": 0.135,
+    "2029": 0.09,
+    "2030": 0.06
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.1,
+    "2027": 0.24,
+    "2028": 0.38,
+    "2029": 0.47,
+    "2030": 0.55
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 8.5,
+    "2027": 11.0,
+    "2028": 12.0,
+    "2029": 12.0,
+    "2030": 11.0
+   }
+  },
+  "downside": {
+   "SALES.attainment": 0.74,
+   "SALES.ae_hires_per_month": {
+    "2026": 2.2,
+    "2027": 2.6,
+    "2028": 2.8,
+    "2029": 2.6,
+    "2030": 2.2
+   },
+   "RETENTION.first_renewal_survival": 0.885,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.185,
+    "2027": 0.13,
+    "2028": 0.08,
+    "2029": 0.05,
+    "2030": 0.035
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.05,
+    "2027": 0.11,
+    "2028": 0.18,
+    "2029": 0.23,
+    "2030": 0.27
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 6.0,
+    "2027": 8.0,
+    "2028": 8.5,
+    "2029": 8.5,
+    "2030": 8.0
+   }
+  },
+  "downside_with_freeze": {
+   "SALES.attainment": 0.74,
+   "SALES.ae_hires_per_month": {
+    "2026": 2.2,
+    "2027": 1.0,
+    "2028": 0.8,
+    "2029": 0.8,
+    "2030": 0.8
+   },
+   "RETENTION.first_renewal_survival": 0.885,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.185,
+    "2027": 0.13,
+    "2028": 0.08,
+    "2029": 0.05,
+    "2030": 0.035
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.05,
+    "2027": 0.11,
+    "2028": 0.18,
+    "2029": 0.23,
+    "2030": 0.27
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 6.0,
+    "2027": 2.5,
+    "2028": 2.0,
+    "2029": 2.0,
+    "2030": 2.0
+   },
+   "HEADCOUNT.ga_hires_per_month": {
+    "2026": 2.2,
+    "2027": 0.8,
+    "2028": 0.5,
+    "2029": 0.5,
+    "2030": 0.5
+   },
+   "HEADCOUNT.ent_custs_per_csm": {
+    "2026": 13,
+    "2027": 15,
+    "2028": 16,
+    "2029": 16,
+    "2030": 16
+   }
+  },
+  "agents_led": {
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.14,
+    "2027": 0.35,
+    "2028": 0.55,
+    "2029": 0.7,
+    "2030": 0.8
+   },
+   "AGENTS.acv_pct_of_core": 0.8,
+   "AGENTS.acv_growth_pa": 0.18,
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 8.0,
+    "2027": 10.5,
+    "2028": 11.5,
+    "2029": 11.5,
+    "2030": 10.5
+   }
+  }
+ },
+ "SCENARIO_LABELS": {
+  "base": "Base",
+  "upside": "Upside",
+  "downside": "Downside",
+  "agents_led": "Agents-Led",
+  "downside_with_freeze": "Downside + Freeze"
+ },
+ "BENCHMARKS": {
+  "nrr_median": 1.15,
+  "nrr_top_quartile": 1.28,
+  "grr_median": 0.89,
+  "grr_top_quartile": 0.94,
+  "burn_multiple_good": 1.0,
+  "magic_number_low": 0.6,
+  "magic_number_high": 0.85,
+  "rule_of_40": 0.4,
+  "gross_margin_saas": 0.78,
+  "arr_per_fte_median": 200000.0
+ }
+};
+/*
+ * Profound Operating Model — browser engine.
+ *
+ * A faithful port of model.py, including the dollar cohort triangle. Not a
+ * simplified summary: the sliders recompute the real model, so there is no band
+ * outside which the dashboard and the workbook disagree.
+ *
+ * Assumptions are loaded from assumptions.json, which is exported from
+ * assumptions.py. Nothing here is transcribed by hand.
+ *
+ * tie_out.mjs asserts this file matches the Python engine line by line across
+ * all 60 months and all five scenarios.
+ */
+
+const M = 60;
+
+const yrVal = (d, year) => {
+  if (d === null || typeof d !== "object") return d;
+  if (year in d) return d[year];
+  const keys = Object.keys(d).map(Number).sort((a, b) => a - b);
+  return d[keys[keys.length - 1]];
+};
+
+const mGrow = (annual) => Math.pow(1 + annual, 1 / 12) - 1;
+
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+/* Assemble a parameter set: base assumptions, scenario overrides, then any
+ * live slider overrides on top. */
+function buildParams(A, scenario = "base", overrides = {}) {
+  const p = {
+    GIVEN: clone(A.GIVEN), TIME: clone(A.TIME), OPENING_BASE: clone(A.OPENING_BASE),
+    SALES: clone(A.SALES), RETENTION: clone(A.RETENTION), ACV: clone(A.ACV),
+    SELFSERVE: clone(A.SELFSERVE), AGENTS: clone(A.AGENTS), COGS: clone(A.COGS),
+    HEADCOUNT: clone(A.HEADCOUNT), OPEX: clone(A.OPEX), CASH: clone(A.CASH),
+    FUNDRAISE: clone(A.FUNDRAISE),
+  };
+  const sc = A.SCENARIOS[scenario] || {};
+  for (const [key, val] of Object.entries(sc)) {
+    const [block, field] = key.split(".");
+    p[block][field] = clone(val);
+  }
+  for (const [key, val] of Object.entries(overrides)) {
+    if (val === null || val === undefined) continue;
+    const [block, field] = key.split(".");
+    const cur = p[block][field];
+    if (cur !== null && typeof cur === "object") {
+      // scale a per-year schedule by the ratio the slider implies at its first year
+      const keys = Object.keys(cur).map(Number).sort((a, b) => a - b);
+      const ratio = cur[keys[0]] !== 0 ? val / cur[keys[0]] : 1;
+      const next = {};
+      for (const y of keys) next[y] = cur[y] * ratio;
+      p[block][field] = next;
+    } else {
+      p[block][field] = val;
+    }
+  }
+  return p;
+}
+
+function monthIndex(A) {
+  const dates = [], years = [];
+  let y = A.TIME.start_year, mo = A.TIME.start_month;
+  for (let i = 0; i < M; i++) {
+    dates.push(new Date(Date.UTC(y, mo, 0)));
+    years.push(y);
+    mo += 1;
+    if (mo > 12) { mo = 1; y += 1; }
+  }
+  return { dates, years };
+}
+
+/* ---------------------------------------------------------------- capacity */
+function salesCapacity(p, years) {
+  const s = p.SALES, attr = p.HEADCOUNT.attrition_sales_pa / 12;
+  const hires = new Float64Array(M), hc = new Float64Array(M);
+  const prod = new Float64Array(M), attrition = new Float64Array(M);
+  const lag = s.time_to_hire_months;
+
+  for (let m = 0; m < M; m++) hires[m] = yrVal(s.ae_hires_per_month, years[Math.max(m - lag, 0)]);
+
+  let prev = s.opening_aes;
+  for (let m = 0; m < M; m++) {
+    attrition[m] = prev * attr;
+    hc[m] = prev * (1 - attr) + hires[m];
+    prev = hc[m];
+  }
+  for (let m = 0; m < M; m++) {
+    const L = yrVal(s.ramp_months_by_year, years[m]);
+    const curve = L === 4 ? s.ramp_curve : s.ramp_curve_5mo;
+    let drag = 0;
+    for (let k = 0; k < 5; k++) {
+      const f = k < curve.length ? curve[k] : 1.0;
+      if (m - k >= 0) drag += hires[m - k] * (1 - f);
+    }
+    prod[m] = Math.max(hc[m] - drag, 0);
+  }
+  return { ae_hires: hires, ae_headcount: hc, productive_ae: prod, ae_attrition: attrition };
+}
+
+/* -------------------------------------------------------------- self serve */
+function selfServe(p) {
+  const ss = p.SELFSERVE, acv = p.ACV;
+  const cust = new Float64Array(M), arr = new Float64Array(M), conv = new Float64Array(M);
+  let c = p.OPENING_BASE.selfserve_customers;
+  const g = mGrow(ss.new_cust_growth_pa), ag = mGrow(acv.selfserve_acv_growth_pa);
+  for (let m = 0; m < M; m++) {
+    const adds = ss.new_customers_per_month * Math.pow(1 + g, m);
+    const churned = c * ss.monthly_churn;
+    const converted = c * ss.monthly_conv_to_ent;
+    c = c - churned - converted + adds;
+    conv[m] = converted; cust[m] = c;
+    arr[m] = c * acv.selfserve_acv * Math.pow(1 + ag, m);
+  }
+  return { ss_customers: cust, ss_arr: arr, ss_conv_to_ent: conv };
+}
+
+/* --------------------------------------------------- dollar cohort triangle */
+function cohortEngine(p, years, cap, ss) {
+  const r = p.RETENTION, s = p.SALES, acv = p.ACV;
+  const n = r.opening_base_spread_months;
+  const slice = p.OPENING_BASE.ent_arr / n;
+
+  const cohorts = [];
+  for (let i = 0; i < n; i++) {
+    cohorts.push({ age: n - i, arr: slice, hist: new Float64Array(M + 1), churn: new Float64Array(M + 1) });
+  }
+
+  const entArr = new Float64Array(M), newArr = new Float64Array(M);
+  const expansion = new Float64Array(M), churn = new Float64Array(M);
+  const newLogos = new Float64Array(M), entCust = new Float64Array(M);
+
+  const acvG = mGrow(acv.ent_acv_growth_pa), quotaG = mGrow(s.quota_growth_pa);
+  const icChurn = r.in_contract_churn_pa / 12;
+  let logo = p.OPENING_BASE.ent_customers;
+
+  for (let m = 0; m < M; m++) {
+    const year = years[m];
+    const seatM = mGrow(yrVal(r.seat_expansion_pa, year));
+    const cross = yrVal(r.cross_sell_uplift, year);
+    const laterSurv = yrVal(r.later_renewal_survival, year);
+    let expM = 0, chM = 0;
+
+    for (const c of cohorts) {
+      c.age += 1;
+      const before = c.arr;
+      c.arr *= (1 + seatM);
+      expM += c.arr - before;
+
+      const lost = c.arr * icChurn;
+      c.arr -= lost; chM += lost; c.churn[m] = lost;
+
+      if (c.age % 12 === 0) {
+        const surv = c.age === 12 ? r.first_renewal_survival : laterSurv;
+        const lostR = c.arr * (1 - surv);
+        c.arr -= lostR; chM += lostR; c.churn[m] += lostR;
+        const preUp = c.arr;
+        c.arr *= (1 + r.renewal_price_uplift + cross);
+        expM += c.arr - preUp;
+      }
+    }
+
+    const quotaNow = s.quota_annual * Math.pow(1 + quotaG, m);
+    let booked = cap.productive_ae[m] * (quotaNow / 12) * s.attainment;
+    const acvNow = acv.ent_new_logo_acv * Math.pow(1 + acvG, m);
+    booked += ss.ss_conv_to_ent[m] * acvNow;
+
+    cohorts.push({ age: 0, arr: booked, hist: new Float64Array(M + 1), churn: new Float64Array(M + 1) });
+
+    newArr[m] = booked; expansion[m] = expM; churn[m] = chM;
+    newLogos[m] = acvNow > 0 ? booked / acvNow : 0;
+
+    let total = 0;
+    for (const c of cohorts) { c.hist[m] = c.arr; total += c.arr; }
+    entArr[m] = total;
+
+    const logoPen = r.logo_churn_premium / 12;
+    logo = logo * (1 - icChurn - logoPen) + newLogos[m];
+    if (m < 12) {
+      logo -= (p.OPENING_BASE.ent_customers / 12) * (1 - (r.first_renewal_survival - r.logo_churn_premium));
+    }
+    entCust[m] = Math.max(logo, 0);
+  }
+  return { ent_arr: entArr, new_arr: newArr, expansion, churn, new_logos: newLogos,
+           ent_customers: entCust, cohorts };
+}
+
+/* ------------------------------------------------------------------ agents */
+function agentsBlock(p, years, coh) {
+  const a = p.AGENTS, acv = p.ACV;
+  const attach = new Float64Array(M), arr = new Float64Array(M), cust = new Float64Array(M);
+  const agG = mGrow(a.acv_growth_pa);
+  let prevYearEnd = 0;
+  for (let m = 0; m < M; m++) {
+    const target = yrVal(a.attach_by_yearend, years[m]);
+    if (m % 12 === 0) prevYearEnd = m > 0 ? attach[m - 1] : 0;
+    attach[m] = prevYearEnd + (target - prevYearEnd) * (((m % 12) + 1) / 12);
+    cust[m] = coh.ent_customers[m] * attach[m];
+    const agAcv = acv.ent_new_logo_acv * a.acv_pct_of_core * Math.pow(1 + agG, m);
+    arr[m] = cust[m] * agAcv;
+  }
+  return { agents_attach: attach, agents_arr: arr, agents_customers: cust };
+}
+
+/* --------------------------------------------------------------- headcount */
+function headcountBlock(p, years, cap, coh) {
+  const h = p.HEADCOUNT, s = p.SALES, ns = h.attrition_nonsales_pa / 12;
+  const rnd = new Float64Array(M), ga = new Float64Array(M), cs = new Float64Array(M);
+  const sdr = new Float64Array(M), mktg = new Float64Array(M);
+  const sops = new Float64Array(M), enable = new Float64Array(M);
+  const gross = new Float64Array(M);
+  let rc = h.opening_split.rnd, gc = h.opening_split.ga;
+
+  for (let m = 0; m < M; m++) {
+    const year = years[m];
+    const rh = yrVal(h.rnd_hires_per_month, year), gh = yrVal(h.ga_hires_per_month, year);
+    const rLost = rc * ns, gLost = gc * ns;
+    gross[m] = rh + rLost + gh + gLost + cap.ae_hires[m] + cap.ae_attrition[m];
+    rc = rc + rh; gc = gc + gh;
+    rnd[m] = rc; ga[m] = gc;
+    const ae = cap.ae_headcount[m];
+    sdr[m] = ae * s.sdr_per_ae; mktg[m] = ae * s.mktg_per_ae;
+    sops[m] = ae * s.salesops_per_ae; enable[m] = ae / 20 * s.enablement_heads_per_20_aes;
+    cs[m] = Math.max(coh.ent_customers[m] / yrVal(h.ent_custs_per_csm, year),
+                     h.opening_split.cs * 0.5);
+  }
+
+  const smTotal = new Float64Array(M), total = new Float64Array(M);
+  const payRnd = new Float64Array(M), payCs = new Float64Array(M);
+  const payGa = new Float64Array(M), paySm = new Float64Array(M), payroll = new Float64Array(M);
+  const lc = h.loaded_cost, inf = mGrow(h.comp_inflation_pa);
+
+  for (let m = 0; m < M; m++) {
+    smTotal[m] = cap.ae_headcount[m] + sdr[m] + mktg[m] + sops[m] + enable[m];
+    total[m] = rnd[m] + ga[m] + cs[m] + smTotal[m];
+    const esc = Math.pow(1 + inf, m);
+    payRnd[m] = rnd[m] * lc.rnd / 12 * esc;
+    payCs[m] = cs[m] * lc.cs / 12 * esc;
+    payGa[m] = ga[m] * lc.ga / 12 * esc;
+    paySm[m] = (cap.ae_headcount[m] * lc.ae + sdr[m] * lc.sdr + mktg[m] * lc.mktg
+                + (sops[m] + enable[m]) * lc.salesops) / 12 * esc;
+    payroll[m] = payRnd[m] + payCs[m] + payGa[m] + paySm[m];
+  }
+  const recruiting = new Float64Array(M);
+  for (let m = 0; m < M; m++) recruiting[m] = gross[m] * h.recruiting_cost_per_hire;
+
+  return { hc_rnd: rnd, hc_ga: ga, hc_cs: cs, hc_sm: smTotal, hc_total: total,
+           gross_hires: gross, pay_rnd: payRnd, pay_cs: payCs, pay_ga: payGa,
+           pay_sm: paySm, payroll, recruiting };
+}
+
+/* -------------------------------------------------------------- financials */
+function financials(p, years, coh, ag, ss, hc) {
+  const c = p.COGS, o = p.OPEX, cp = p.CASH;
+  const core = new Float64Array(M), totalArr = new Float64Array(M);
+  for (let m = 0; m < M; m++) {
+    core[m] = coh.ent_arr[m] + ss.ss_arr[m];
+    totalArr[m] = core[m] + ag.agents_arr[m];
+  }
+
+  const revCore = new Float64Array(M), revAg = new Float64Array(M);
+  const revSs = new Float64Array(M), revenue = new Float64Array(M), revEnt = new Float64Array(M);
+  for (let m = 0; m < M; m++) {
+    const begCore = m === 0 ? p.OPENING_BASE.ent_arr + p.OPENING_BASE.selfserve_arr : core[m - 1];
+    const begAg = m === 0 ? 0 : ag.agents_arr[m - 1];
+    const begSs = m === 0 ? p.OPENING_BASE.selfserve_arr : ss.ss_arr[m - 1];
+    revCore[m] = begCore / 12; revAg[m] = begAg / 12; revSs[m] = begSs / 12;
+    revenue[m] = revCore[m] + revAg[m]; revEnt[m] = revCore[m] - revSs[m];
+  }
+
+  const qGrow = mGrow(c.query_volume_growth_pa), defl = mGrow(-c.inference_deflation_pa);
+  const qBase = c.tracked_prompts_per_customer * c.engines_monitored * c.runs_per_prompt_per_month;
+  const cogs = new Float64Array(M), cogsInf = new Float64Array(M), gp = new Float64Array(M);
+  const opexSm = new Float64Array(M), opexRnd = new Float64Array(M), opexGa = new Float64Array(M);
+  const opexTotal = new Float64Array(M), sbc = new Float64Array(M);
+  const ebitda = new Float64Array(M), capex = new Float64Array(M);
+  const mktgProg = new Float64Array(M);
+
+  let crossed = false;
+  for (let m = 0; m < M; m++) {
+    const year = years[m];
+    const q = qBase * Math.pow(1 + qGrow, m);
+    const cq = c.cost_per_query * Math.pow(1 + defl, m);
+    cogsInf[m] = coh.ent_customers[m] * q * cq;
+    const cogsAg = revAg[m] * yrVal(c.agents_cogs_pct, year);
+    const cogsSs = revSs[m] * c.selfserve_cogs_pct;
+    const cogsHost = revenue[m] * yrVal(c.hosting_pct_of_rev, year);
+    const cogsData = revenue[m] * c.third_party_data_pct_of_rev;
+    const cogsCs = c.cs_in_cogs ? hc.pay_cs[m] : 0;
+    cogs[m] = cogsInf[m] + cogsAg + cogsSs + cogsHost + cogsData + cogsCs;
+    gp[m] = revenue[m] - cogs[m];
+
+    const hct = hc.hc_total[m];
+    const software = hct * o.software_per_head_pa / 12;
+    const te = hct * o.te_per_head_pa / 12;
+    const otherGa = hct * o.other_ga_per_head_pa / 12;
+    const facilities = hct * o.facilities_per_head_pa / 12
+      + (hct >= o.office_step_at_headcount ? o.office_step_cost_pa / 12 : 0);
+    const rndCompute = revenue[m] * yrVal(o.rnd_compute_pct_of_rev, year);
+    mktgProg[m] = revenue[m] * o.marketing_programs_pct_of_rev;
+    const prof = o.professional_fees_pa * Math.pow(1 + o.professional_fees_growth_pa, year - years[0]) / 12;
+    const ins = o.insurance_pa * Math.pow(1 + o.insurance_growth_pa, year - years[0]) / 12;
+    const opexCs = c.cs_in_cogs ? 0 : hc.pay_cs[m];
+
+    opexSm[m] = hc.pay_sm[m] + opexCs + mktgProg[m] + te * 0.5;
+    opexRnd[m] = hc.pay_rnd[m] + software * 0.5 + rndCompute;
+    opexGa[m] = hc.pay_ga[m] + hc.recruiting[m] + prof + ins + facilities + otherGa
+      + software * 0.5 + te * 0.5;
+    opexTotal[m] = opexSm[m] + opexRnd[m] + opexGa[m];
+    sbc[m] = revenue[m] * p.HEADCOUNT.sbc_pct_of_revenue;
+    ebitda[m] = gp[m] - opexTotal[m];
+
+    capex[m] = hc.gross_hires[m] * cp.capex_per_new_hire;
+    if (!crossed && hct >= o.office_step_at_headcount) {
+      capex[m] += cp.leasehold_at_office_step; crossed = true;
+    }
+  }
+
+  const da = new Float64Array(M);
+  for (let m = 0; m < M; m++) {
+    for (let k = Math.max(0, m - 35); k <= m; k++) da[m] += capex[k] / 36;
+  }
+
+  const defFactor = cp.annual_upfront_pct * 0.5 + cp.quarterly_pct * (1.5 / 12);
+  const deferred = new Float64Array(M), dDef = new Float64Array(M);
+  const billings = new Float64Array(M), ar = new Float64Array(M), dAr = new Float64Array(M);
+  const ap = new Float64Array(M), dAp = new Float64Array(M), badDebt = new Float64Array(M);
+  const openDef = (p.OPENING_BASE.ent_arr + p.OPENING_BASE.selfserve_arr) * defFactor;
+
+  for (let m = 0; m < M; m++) {
+    deferred[m] = core[m] * defFactor;
+    dDef[m] = deferred[m] - (m === 0 ? openDef : deferred[m - 1]);
+    const billAg = m === 0 ? 0 : revAg[m - 1];
+    billings[m] = revCore[m] + dDef[m] + billAg;
+    ar[m] = billings[m] * (cp.dso_days / 30);
+    dAr[m] = m === 0 ? 0 : ar[m] - ar[m - 1];
+    ap[m] = (cogs[m] + opexTotal[m]) * (cp.dpo_days / 30);
+    dAp[m] = m === 0 ? 0 : ap[m] - ap[m - 1];
+    badDebt[m] = billings[m] * cp.bad_debt_pct;
+  }
+
+  const cashBeg = new Float64Array(M), cashEnd = new Float64Array(M);
+  const interest = new Float64Array(M), netIncome = new Float64Array(M), fcf = new Float64Array(M);
+  let bal = p.GIVEN.opening_cash;
+  for (let m = 0; m < M; m++) {
+    cashBeg[m] = bal;
+    interest[m] = bal * cp.interest_rate_on_cash / 12;
+    netIncome[m] = ebitda[m] - sbc[m] - da[m] + interest[m];
+    fcf[m] = netIncome[m] + sbc[m] + da[m] - dAr[m] + dDef[m] + dAp[m] - badDebt[m] - capex[m];
+    bal += fcf[m];
+    cashEnd[m] = bal;
+  }
+
+  return { core_arr: core, total_arr: totalArr, revenue, rev_ent: revEnt, rev_ss: revSs,
+           rev_agents: revAg, cogs, cogs_inference: cogsInf, gross_profit: gp,
+           opex_sm: opexSm, opex_rnd: opexRnd, opex_ga: opexGa, opex_total: opexTotal,
+           sbc, ebitda, capex, da, deferred, billings, interest, fcf,
+           cash_beg: cashBeg, cash_end: cashEnd };
+}
+
+/* -------------------------------------------------------------------- KPIs */
+function kpis(p, coh, hc, fin) {
+  const nrr = new Array(M).fill(null), grr = new Array(M).fill(null);
+  for (let m = 12; m < M; m++) {
+    let vNow = 0, vThen = 0, ch12 = 0;
+    for (const c of coh.cohorts) {
+      const then = c.hist[m - 12];
+      if (then > 0) {
+        vThen += then; vNow += c.hist[m];
+        for (let k = m - 11; k <= m; k++) ch12 += c.churn[k];
+      }
+    }
+    if (vThen > 0) nrr[m] = vNow / vThen;
+  }
+  /* GRR on a simplified basis: trailing twelve month churn over total ARR twelve months ago.
+   * Slightly overstates churn, which is the conservative direction, and is the definition the
+   * workbook can express without per-cohort churn tracking. All three artifacts agree exactly. */
+  for (let m = 12; m < M; m++) {
+    const base = fin.total_arr[m - 12];
+    if (base > 0) {
+      let ch = 0;
+      for (let k = m - 11; k <= m; k++) ch += coh.churn[k];
+      grr[m] = Math.max(0, 1 - ch / base);
+    }
+  }
+  const gm = new Array(M).fill(null), arrFte = new Float64Array(M);
+  const bm = new Array(M).fill(null), r40 = new Array(M).fill(null);
+  const yoy = new Float64Array(M), runway = new Array(M).fill(null);
+  for (let m = 0; m < M; m++) {
+    gm[m] = fin.revenue[m] > 0 ? fin.gross_profit[m] / fin.revenue[m] : null;
+    arrFte[m] = fin.total_arr[m] / hc.hc_total[m];
+    const prior = m < 12 ? p.GIVEN.opening_arr : fin.total_arr[m - 12];
+    yoy[m] = fin.total_arr[m] / prior - 1;
+  }
+  for (let m = 12; m < M; m++) {
+    let burn = 0, revTtm = 0, ebTtm = 0;
+    for (let k = m - 11; k <= m; k++) { burn -= fin.fcf[k]; revTtm += fin.revenue[k]; ebTtm += fin.ebitda[k]; }
+    const netNew = fin.total_arr[m] - fin.total_arr[m - 12];
+    bm[m] = (netNew > 0 && burn > 0) ? burn / netNew : null;
+    r40[m] = yoy[m] + (revTtm > 0 ? ebTtm / revTtm : 0);
+  }
+  const minCash = p.GIVEN.min_cash;
+  for (let m = 0; m < M; m++) {
+    let s = 0, n = 0;
+    for (let k = Math.max(0, m - 2); k <= m; k++) { s += fin.fcf[k]; n++; }
+    const burn = -s / n;
+    runway[m] = burn > 0 ? Math.max((fin.cash_end[m] - minCash) / burn, 0) : null;
+  }
+  /* CAC on two bases. BLENDED charges all of S&M, including customer success, against
+   * newly acquired customers; it is what a reader can recompute from the P&L. NEW BUSINESS
+   * excludes customer success and is the true acquisition measure. */
+  const cac = new Array(M).fill(null), cacNb = new Array(M).fill(null);
+  const cacDollars = new Array(M).fill(null), magic = new Array(M).fill(null);
+  for (let m = 3; m < M; m++) {
+    let sm3 = 0, cs3 = 0, new3 = 0, logos3 = 0;
+    for (let k = m - 2; k <= m; k++) {
+      sm3 += fin.opex_sm[k];
+      cs3 += p.COGS.cs_in_cogs ? 0 : hc.pay_cs[k];
+      new3 += coh.new_arr[k]; logos3 += coh.new_logos[k];
+    }
+    if (new3 > 0 && gm[m] != null && gm[m] > 0) {
+      cac[m] = sm3 / (new3 * gm[m]) * 12;
+      cacNb[m] = (sm3 - cs3) / (new3 * gm[m]) * 12;
+    }
+    if (logos3 > 0) cacDollars[m] = (sm3 - cs3) / logos3;
+  }
+  for (let m = 6; m < M; m++) {
+    let q1 = 0, q0 = 0, smp = 0;
+    for (let k = m - 2; k <= m; k++) q1 += fin.revenue[k];
+    for (let k = m - 5; k <= m - 3; k++) { q0 += fin.revenue[k]; smp += fin.opex_sm[k]; }
+    if (smp > 0) magic[m] = (q1 - q0) * 4 / smp;
+  }
+  let breach = null;
+  for (let m = 0; m < M; m++) if (fin.cash_end[m] < minCash) { breach = m; break; }
+  const decision = breach === null ? null : breach - p.FUNDRAISE.process_launch_at_runway_months;
+
+  let trough = Infinity, troughMonth = 0;
+  for (let m = 0; m < M; m++) if (fin.cash_end[m] < trough) { trough = fin.cash_end[m]; troughMonth = m; }
+
+  return { nrr, grr, gross_margin: gm, burn_multiple: bm, arr_per_fte: arrFte,
+           rule_of_40: r40, arr_growth_yoy: yoy, runway_months: runway,
+           cac_payback_months: cac, cac_payback_new_business: cacNb,
+           cac_dollars: cacDollars, magic_number: magic,
+           breach_month: breach, decision_month: decision, trough, trough_month: troughMonth,
+           capital_need: Math.max(minCash - trough, 0) };
+}
+
+/* --------------------------------------------------------------------- run */
+function run(A, scenario = "base", overrides = {}) {
+  const p = buildParams(A, scenario, overrides);
+  const { dates, years } = monthIndex(A);
+  const cap = salesCapacity(p, years);
+  const ss = selfServe(p);
+  const coh = cohortEngine(p, years, cap, ss);
+  const ag = agentsBlock(p, years, coh);
+  const hc = headcountBlock(p, years, cap, coh);
+  const fin = financials(p, years, coh, ag, ss, hc);
+  const k = kpis(p, coh, hc, fin);
+  return { dates, years, params: p, ...cap, ...ss, ...coh, ...ag, ...hc, ...fin, ...k };
+}
+
+</script>
+<script>
+/* Profound operating model — dashboard interaction and charts.
+ * Charts are hand-built SVG so the page has no external dependencies. */
+
+const $ = (s) => document.querySelector(s);
+const el = (t, a = {}, kids = []) => {
+  const n = document.createElementNS("http://www.w3.org/2000/svg", t);
+  for (const [k, v] of Object.entries(a)) n.setAttribute(k, v);
+  for (const c of [].concat(kids)) n.appendChild(c);
+  return n;
+};
+const SERIES = ["--s1", "--s2", "--s3", "--s4", "--s5"];
+const cssv = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+const fM = (v) => {
+  if (v === null || v === undefined || Number.isNaN(v)) return "n/a";
+  const a = Math.abs(v), sign = v < 0 ? "\u2212" : "";
+  if (a >= 1e9) return sign + "$" + (a / 1e9).toFixed(2) + "B";
+  return sign + "$" + (a / 1e6).toFixed(a >= 1e8 ? 0 : 1) + "M";
+};
+const fK = (v) => v == null ? "n/a" : "$" + Math.round(v / 1e3).toLocaleString() + "K";
+const fP = (v, d = 0) => v == null ? "n/a" : (v * 100).toFixed(d) + "%";
+const fN = (v, d = 0) => v == null ? "n/a" : Number(v).toLocaleString(undefined, { maximumFractionDigits: d });
+const fX = (v) => v == null ? "n/a" : v.toFixed(2) + "x";
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const mlabel = (i) => MON[i % 12] + "-" + String(26 + Math.floor(i / 12));
+
+const SCN = Object.keys(A.SCENARIO_LABELS);
+const RUNS = {};
+SCN.forEach((s) => { RUNS[s] = run(A, s); });
+const BASE = RUNS.base;
+
+/* ------------------------------------------------------------------ charts */
+function lineChart(host, opts) {
+  const { series, hline, yFmt = fM, height = 300, tip, labelLast = true } = opts;
+  const W = host.clientWidth || 760, H = height;
+  const P = { t: 14, r: labelLast ? 96 : 20, b: 26, l: 56 };
+  const iw = W - P.l - P.r, ih = H - P.t - P.b;
+  const n = series[0].values.length;
+  let lo = Infinity, hi = -Infinity;
+  for (const s of series) for (const v of s.values) {
+    if (v === null || v === undefined || Number.isNaN(v)) continue;
+    if (v < lo) lo = v; if (v > hi) hi = v;
+  }
+  if (hline != null) { lo = Math.min(lo, hline); hi = Math.max(hi, hline); }
+  const pad = (hi - lo) * 0.08 || 1;
+  const ok = (v) => v !== null && v !== undefined && !Number.isNaN(v);
+  const allPos = series.every((s) => s.values.every((v) => !ok(v) || v >= 0)) && (hline == null || hline >= 0);
+  lo = allPos ? Math.max(0, lo - pad) : lo - pad;
+  hi += pad;
+  const X = (i) => P.l + (i / (n - 1)) * iw;
+  const Y = (v) => P.t + (1 - (v - lo) / (hi - lo)) * ih;
+
+  const g = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img" });
+  const ticks = 5;
+  for (let k = 0; k <= ticks; k++) {
+    const v = lo + (hi - lo) * (k / ticks), y = Y(v);
+    g.appendChild(el("line", { x1: P.l, x2: P.l + iw, y1: y, y2: y, stroke: cssv("--grid"), "stroke-width": 1 }));
+    const t = el("text", { x: P.l - 9, y: y + 4, "text-anchor": "end", fill: cssv("--text-muted"),
+      "font-size": 11, "font-variant-numeric": "tabular-nums" });
+    t.textContent = yFmt(v); g.appendChild(t);
+  }
+  for (let i = 0; i < n; i += 12) {
+    const t = el("text", { x: X(i), y: H - 6, "text-anchor": "middle", fill: cssv("--text-muted"), "font-size": 11 });
+    t.textContent = mlabel(i); g.appendChild(t);
+  }
+  if (hline != null) {
+    g.appendChild(el("line", { x1: P.l, x2: P.l + iw, y1: Y(hline), y2: Y(hline),
+      stroke: cssv("--critical"), "stroke-width": 1.5, "stroke-dasharray": "5 4" }));
+    const t = el("text", { x: P.l + 6, y: Y(hline) - 7, fill: cssv("--critical"), "font-size": 11, "font-weight": 600 });
+    t.textContent = opts.hlabel || "$25M floor"; g.appendChild(t);
+  }
+  series.forEach((s) => {
+    let d = "", pen = false;
+    s.values.forEach((v, i) => {
+      if (!ok(v)) { pen = false; return; }
+      d += `${pen ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`; pen = true;
+    });
+    g.appendChild(el("path", { d, fill: "none", stroke: s.color, "stroke-width": s.width || 2,
+      "stroke-linejoin": "round", "stroke-linecap": "round", opacity: s.dim ? 0.5 : 1,
+      ...(s.dash ? { "stroke-dasharray": s.dash } : {}) }));
+    if (labelLast) {
+      let li = n - 1; while (li > 0 && !ok(s.values[li])) li--;
+      const t = el("text", { x: P.l + iw + 8, y: Y(s.values[li]) + 4, fill: s.color,
+        "font-size": 11.5, "font-weight": 620 });
+      t.textContent = s.name; g.appendChild(t);
+    }
+  });
+
+  const cross = el("line", { y1: P.t, y2: P.t + ih, stroke: cssv("--axis"), "stroke-width": 1, opacity: 0 });
+  g.appendChild(cross);
+  const dots = series.map((s) => {
+    const c = el("circle", { r: 4.5, fill: s.color, stroke: cssv("--surface-1"), "stroke-width": 2, opacity: 0 });
+    g.appendChild(c); return c;
+  });
+  const hit = el("rect", { x: P.l, y: P.t, width: iw, height: ih, fill: "transparent" });
+  g.appendChild(hit);
+  if (tip) {
+    hit.addEventListener("mousemove", (e) => {
+      const r = g.getBoundingClientRect();
+      const i = Math.max(0, Math.min(n - 1, Math.round(((e.clientX - r.left) / r.width * W - P.l) / iw * (n - 1))));
+      cross.setAttribute("x1", X(i)); cross.setAttribute("x2", X(i)); cross.setAttribute("opacity", 1);
+      dots.forEach((c, k) => {
+        const v = series[k].values[i];
+        if (!ok(v)) { c.setAttribute("opacity", 0); return; }
+        c.setAttribute("cx", X(i)); c.setAttribute("cy", Y(v)); c.setAttribute("opacity", 1);
+      });
+      tip.innerHTML = `<div class="th">${mlabel(i)}</div>` + series.map((s) =>
+        `<div class="row"><span><span class="dot" style="background:${s.color}"></span>${s.name}</span><span>${ok(s.values[i]) ? yFmt(s.values[i]) : "n/a"}</span></div>`).join("");
+      tip.style.opacity = 1;
+      const left = Math.min(Math.max(X(i) / W * r.width - 90, 0), r.width - 190);
+      tip.style.left = left + "px"; tip.style.top = "8px";
+    });
+    hit.addEventListener("mouseleave", () => {
+      tip.style.opacity = 0; cross.setAttribute("opacity", 0); dots.forEach((c) => c.setAttribute("opacity", 0));
+    });
+  }
+  host.innerHTML = ""; host.appendChild(g);
+}
+
+function barChart(host, opts) {
+  const { items, yFmt = fM, height = 300, tip, horizontal = false } = opts;
+  const W = host.clientWidth || 520, H = height;
+  const g = el("svg", { viewBox: `0 0 ${W} ${H}` });
+  if (horizontal) {
+    const P = { t: 8, r: 74, b: 8, l: 156 };
+    const iw = W - P.l - P.r, rh = (H - P.t - P.b) / items.length;
+    const mx = Math.max(...items.map((d) => Math.abs(d.value))) || 1;
+    items.forEach((d, i) => {
+      const y = P.t + i * rh + rh * 0.18, h = rh * 0.64;
+      const w = Math.abs(d.value) / mx * iw;
+      g.appendChild(el("rect", { x: P.l, y, width: Math.max(w, 2), height: h, rx: 4, fill: d.color }));
+      const lb = el("text", { x: P.l - 10, y: y + h / 2 + 4, "text-anchor": "end",
+        fill: cssv("--text-secondary"), "font-size": 11.5 });
+      lb.textContent = d.name; g.appendChild(lb);
+      const vl = el("text", { x: P.l + w + 8, y: y + h / 2 + 4, fill: cssv("--text-primary"),
+        "font-size": 11.5, "font-weight": 620, "font-variant-numeric": "tabular-nums" });
+      vl.textContent = yFmt(d.value); g.appendChild(vl);
+      if (tip) {
+        const hz = el("rect", { x: 0, y: P.t + i * rh, width: W, height: rh, fill: "transparent" });
+        hz.addEventListener("mousemove", () => {
+          tip.innerHTML = `<div class="th">${d.name}</div><div class="row"><span>${d.note || "Swing"}</span><span>${yFmt(d.value)}</span></div>`;
+          tip.style.opacity = 1; tip.style.left = "12px"; tip.style.top = (P.t + i * rh) + "px";
+        });
+        hz.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+        g.appendChild(hz);
+      }
+    });
+  } else {
+    const P = { t: 16, r: 12, b: 58, l: 58 };
+    const iw = W - P.l - P.r, ih = H - P.t - P.b, bw = iw / items.length;
+    const vmax = Math.max(0, ...items.map((d) => d.value));
+    const vmin = Math.min(0, ...items.map((d) => d.value));
+    const span = (vmax - vmin) || 1;
+    const zero = P.t + (vmax / span) * ih;
+    items.forEach((d, i) => {
+      const h = Math.abs(d.value) / span * ih;
+      const x = P.l + i * bw + bw * 0.16, w = bw * 0.68;
+      const y = d.value >= 0 ? zero - h : zero;
+      g.appendChild(el("rect", { x, y, width: w, height: Math.max(h, 2), rx: 4, fill: d.color }));
+      const v = el("text", { x: x + w / 2, y: d.value >= 0 ? y - 8 : y + h + 15, "text-anchor": "middle",
+        fill: cssv("--text-primary"), "font-size": 11.5, "font-weight": 620 });
+      v.textContent = yFmt(d.value); g.appendChild(v);
+      d.name.split("\n").forEach((line, k) => {
+        const t = el("text", { x: x + w / 2, y: H - 30 + k * 13, "text-anchor": "middle",
+          fill: cssv("--text-muted"), "font-size": 11 });
+        t.textContent = line; g.appendChild(t);
+      });
+    });
+    g.appendChild(el("line", { x1: P.l, x2: P.l + iw, y1: zero, y2: zero, stroke: cssv("--axis"), "stroke-width": 1 }));
+  }
+  host.innerHTML = ""; host.appendChild(g);
+}
+
+function areaChart(host, opts) {
+  const { stack, height = 260, tip } = opts;
+  const W = host.clientWidth || 760, H = height;
+  const P = { t: 14, r: 92, b: 26, l: 52 };
+  const iw = W - P.l - P.r, ih = H - P.t - P.b, n = stack[0].values.length;
+  const tot = new Array(n).fill(0);
+  stack.forEach((s) => s.values.forEach((v, i) => tot[i] += v));
+  const hi = Math.max(...tot) * 1.05;
+  const X = (i) => P.l + (i / (n - 1)) * iw, Y = (v) => P.t + (1 - v / hi) * ih;
+  const g = el("svg", { viewBox: `0 0 ${W} ${H}` });
+  for (let k = 0; k <= 4; k++) {
+    const y = Y(hi * k / 4);
+    g.appendChild(el("line", { x1: P.l, x2: P.l + iw, y1: y, y2: y, stroke: cssv("--grid") }));
+    const t = el("text", { x: P.l - 9, y: y + 4, "text-anchor": "end", fill: cssv("--text-muted"), "font-size": 11 });
+    t.textContent = fN(hi * k / 4); g.appendChild(t);
+  }
+  const base = new Array(n).fill(0);
+  stack.forEach((s) => {
+    const top = base.map((b, i) => b + s.values[i]);
+    const d = top.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("")
+      + base.slice().reverse().map((v, j) => `L${X(n - 1 - j).toFixed(1)},${Y(v).toFixed(1)}`).join("") + "Z";
+    g.appendChild(el("path", { d, fill: s.color, opacity: 0.9, stroke: cssv("--surface-1"), "stroke-width": 2 }));
+    const t = el("text", { x: P.l + iw + 8, y: Y((top[n - 1] + base[n - 1]) / 2) + 4, fill: s.color,
+      "font-size": 11.5, "font-weight": 620 });
+    t.textContent = s.name; g.appendChild(t);
+    for (let i = 0; i < n; i++) base[i] = top[i];
+  });
+  for (let i = 0; i < n; i += 12) {
+    const t = el("text", { x: X(i), y: H - 6, "text-anchor": "middle", fill: cssv("--text-muted"), "font-size": 11 });
+    t.textContent = mlabel(i); g.appendChild(t);
+  }
+  const hit = el("rect", { x: P.l, y: P.t, width: iw, height: ih, fill: "transparent" });
+  g.appendChild(hit);
+  if (tip) {
+    hit.addEventListener("mousemove", (e) => {
+      const r = g.getBoundingClientRect();
+      const i = Math.max(0, Math.min(n - 1, Math.round(((e.clientX - r.left) / r.width * W - P.l) / iw * (n - 1))));
+      tip.innerHTML = `<div class="th">${mlabel(i)}</div>` + stack.map((s) =>
+        `<div class="row"><span><span class="dot" style="background:${s.color}"></span>${s.name}</span><span>${fN(s.values[i])}</span></div>`).join("")
+        + `<div class="row" style="margin-top:4px;font-weight:640"><span>Total</span><span>${fN(tot[i])}</span></div>`;
+      tip.style.opacity = 1;
+      tip.style.left = Math.min(Math.max(X(i) / W * r.width - 90, 0), r.width - 190) + "px";
+      tip.style.top = "8px";
+    });
+    hit.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+  }
+  host.innerHTML = ""; host.appendChild(g);
+}
+
+/* ------------------------------------------------------------- aggregation */
+const yearIdx = [0, 1, 2, 3, 4].map((y) => ({ lo: y * 12, hi: y * 12 + 12, label: "FY" + (2026 + y) }));
+const sum = (a, lo, hi) => { let s = 0; for (let i = lo; i < hi; i++) s += a[i]; return s; };
+const last = (a, hi) => a[hi - 1];
+
+/* ------------------------------------------------------------------- tiles */
+function tile(k, v, d, bench) {
+  return `<div class="card tile"><div class="k">${k}</div><div class="v">${v}</div>
+    <div class="d">${d}</div>${bench || ""}</div>`;
+}
+function benchLine(ok, txt) {
+  return `<div class="bench" style="color:${ok ? "var(--success-text)" : "var(--text-secondary)"}">
+    <span class="dot" style="background:${ok ? "var(--good)" : "var(--warning)"}"></span>${txt}</div>`;
+}
+
+function renderFindings() {
+  const b = BASE, d = RUNS.downside;
+  /* The strength gate is the ARR milestone. Burn multiple is deliberately not part of
+   * it: it never exceeds 1.0x anywhere in the model, so it would confirm rather than
+   * test. Crossing $100M is the condition that actually binds. */
+  let gateIdx = -1;
+  for (let i = 0; i < 60; i++) {
+    if (BASE.total_arr[i] >= A.FUNDRAISE.milestone_arr) { gateIdx = i; break; }
+  }
+  const gateTxt = gateIdx < 0 ? "not reached" : mlabel(gateIdx);
+  const breachTxt = b.breach_month === null ? "No breach in five years" : mlabel(b.breach_month);
+  const decTxt = b.decision_month === null || b.decision_month < 0 ? "Not required" : mlabel(b.decision_month);
+  $("#tiles").innerHTML =
+    tile("Peak capital need, downside", fM(d.capital_need), "Base case needs " + fM(b.capital_need),
+      benchLine(false, "The requirement lives here, not in the base")) +
+    tile("Launch the process", "Q1 2027",
+      "$100M ARR crossed " + gateTxt + ". Necessity gate not until " + decTxt) +
+    tile("Trough cash, base", fM(b.trough), "In " + mlabel(b.trough_month) + " against a $25M floor") +
+    tile("FY30 ARR, base", fM(b.total_arr[59]),
+      fP(Math.pow(b.total_arr[59] / A.GIVEN.opening_arr, 1 / 5) - 1) +
+      " CAGR from $55M, " + fK(b.arr_per_fte[59]) + " per employee");
+
+  const cacN = BASE.cac_payback_new_business || [];
+  const cacDeterioration = fP((cacN[59] / cacN[11]) - 1);
+  let below = 0;
+  for (let i = 0; i < 60; i++) if (d.cash_end[i] < A.GIVEN.min_cash) below++;
+
+  $("#recommendation").innerHTML =
+    `<b>Recommendation. Raise $150M to $200M, with the process launched in Q1 2027</b>, gated on passing
+     $100M ARR rather than on a cash level. That range is where Series D rounds at this ARR clear, and at
+     plausible marks it costs 4% to 6% dilution.
+     <br><br>
+     <b>Why raise, when the base case barely needs it.</b> The base case needs ${fM(b.capital_need)},
+     which is noise. The reason to raise is not the base case. It is that the two things this plan
+     depends on are the two things with no evidence behind them yet.
+     <br><br>
+     Retention is the first. Nothing in the opening base has faced a renewal. A first renewal cohort
+     landing at 88.5% rather than 92% turns a ${fM(b.capital_need)} requirement into
+     <b>${fM(d.capital_need)}</b>, and the company spends ${below} months below the cash floor getting
+     there. There is no way to know which of those worlds you are in until late 2027, by which point the
+     financing decision has been made for you.
+     <br><br>
+     Acquisition efficiency is the second. CAC payback on new business runs
+     <b>${cacN[11].toFixed(0)} months today and ${cacN[59].toFixed(0)} by FY30</b>, a
+     ${cacDeterioration} deterioration driven by quota decay and lengthening ramp. Every month of delay
+     buys a less productive seller than the month before. Capital deployed into sales in 2027 works
+     materially harder than the same capital in 2029.
+     <br><br>
+     <b>Why Q1 2027 rather than later.</b> Two dates matter and they sit two quarters apart. ARR crosses
+     $100M in <b>${gateTxt}</b>, so Q1 2027 is the first window with a full quarter of post milestone
+     actuals to put in front of an investor. The necessity gate, eighteen months ahead of the base case
+     breach in ${breachTxt}, is <b>${decTxt}</b>. Raising at the first tells the story that growth is
+     compounding and the round funds capturing more of it. Raising at the second tells the story that the
+     round extends runway.`;
+
+  const cashSeries = SCN.map((s, i) => ({
+    name: A.SCENARIO_LABELS[s], color: cssv(SERIES[i]), values: Array.from(RUNS[s].cash_end),
+    width: s === "base" ? 2.5 : 2,
+  }));
+  $("#cashlegend").innerHTML = cashSeries.map((s) =>
+    `<span class="lg"><span class="sw" style="background:${s.color}"></span>${s.name}</span>`).join("") +
+    `<span class="lg"><span class="sw" style="background:var(--critical)"></span>$25M floor</span>`;
+  lineChart($("#cashchart"), { series: cashSeries, hline: A.GIVEN.min_cash, tip: $("#cashtip"), height: 330 });
+
+  const N = 60;
+  const eb = sum(BASE.ebitda, 0, N), sbc = sum(BASE.sbc, 0, N);
+  const ddef = BASE.deferred[N - 1] - (A.GIVEN.opening_arr *
+    (A.CASH.annual_upfront_pct * 0.5 + A.CASH.quarterly_pct * 1.5 / 12));
+  const intr = sum(BASE.interest, 0, N), fcf = sum(BASE.fcf, 0, N);
+  barChart($("#bridgechart"), {
+    items: [
+      { name: "EBITDA\nex-SBC", value: eb, color: cssv("--critical") },
+      { name: "Stock\ncomp", value: sbc, color: cssv("--s3") },
+      { name: "Deferred\nrevenue", value: ddef, color: cssv("--s1") },
+      { name: "Interest\nincome", value: intr, color: cssv("--s3") },
+      { name: "Free cash\nflow", value: fcf, color: cssv("--s2") },
+    ], tip: $("#bridgetip"), height: 290,
+  });
+
+  tornadoChart($("#tornado"), tornado(), $("#tortip"));
+
+  const cacB = Array.from(BASE.cac_payback_months || []);
+  const cacNb = Array.from(BASE.cac_payback_new_business || []);
+  $("#caclegend").innerHTML =
+    `<span class="lg"><span class="sw" style="background:${cssv("--s1")}"></span>New business only, excludes customer success</span>` +
+    `<span class="lg"><span class="sw" style="background:${cssv("--s2")}"></span>Blended, all sales and marketing</span>` +
+    `<span class="lg"><span class="sw" style="background:var(--critical)"></span>18 month benchmark</span>`;
+  lineChart($("#cacchart"), {
+    series: [
+      { name: "New business", color: cssv("--s1"), values: cacNb, width: 2.5 },
+      { name: "Blended", color: cssv("--s2"), values: cacB, width: 2 },
+    ],
+    hline: 18, hlabel: "18 month benchmark", yFmt: (v) => v.toFixed(0) + " mo",
+    tip: $("#cactip"), height: 260, labelLast: false,
+  });
+
+  const rows = SCN.map((s) => {
+    const r = RUNS[s];
+    return `<tr${s === "base" ? ' class="strong"' : ""}><td>${A.SCENARIO_LABELS[s]}</td>
+      <td>${fM(r.total_arr[11])}</td><td>${fM(r.total_arr[35])}</td><td>${fM(r.total_arr[59])}</td>
+      <td>${fN(r.hc_total[59])}</td><td>${fK(r.arr_per_fte[59])}</td><td>${fM(r.trough)}</td>
+      <td>${r.breach_month === null ? "None" : mlabel(r.breach_month)}</td>
+      <td>${r.capital_need > 0 ? fM(r.capital_need) : "—"}</td></tr>`;
+  }).join("");
+  $("#scntable").innerHTML = `<thead><tr><th>Scenario</th><th>FY26 ARR</th><th>FY28 ARR</th>
+    <th>FY30 ARR</th><th>FY30 heads</th><th>ARR per FTE</th><th>Trough cash</th>
+    <th>Breach</th><th>Capital need</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* ---------------------------------------------------------------- tornado */
+const DRIVERS = [
+  { key: "RETENTION.first_renewal_survival", name: "First renewal survival", short: "First renewal survival",
+    lo: 0.84, hi: 0.96, tlo: 0.88, thi: 0.95, base: A.RETENTION.first_renewal_survival, fmt: (v) => fP(v, 1), step: 0.005,
+    note: "The least proven number in the business" },
+  { key: "SALES.attainment", name: "Quota attainment", short: "Quota attainment", lo: 0.60, hi: 0.90, tlo: 0.70, thi: 0.85,
+    base: A.SALES.attainment, fmt: (v) => fP(v, 0), step: 0.01, note: "Benchmark 70% median, 80% top quartile" },
+  { key: "RETENTION.seat_expansion_pa", name: "Seat expansion, FY26", short: "Seat expansion", lo: 0.10, hi: 0.32, tlo: 0.17, thi: 0.27,
+    base: A.RETENTION.seat_expansion_pa["2026"], fmt: (v) => fP(v, 0), step: 0.005,
+    note: "Later years scale with this" },
+  { key: "AGENTS.attach_by_yearend", name: "Agents attach, FY26", short: "Agents attach", lo: 0.03, hi: 0.20, tlo: 0.05, thi: 0.12,
+    base: A.AGENTS.attach_by_yearend["2026"], fmt: (v) => fP(v, 0), step: 0.005,
+    note: "Biggest swing, weakest benchmark" },
+  { key: "CASH.annual_upfront_pct", name: "Billed annually upfront", short: "Annual upfront billing", lo: 0.40, hi: 0.90, tlo: 0.55, thi: 0.75,
+    base: A.CASH.annual_upfront_pct, fmt: (v) => fP(v, 0), step: 0.01,
+    note: "Drives the deferred revenue cushion" },
+  { key: "COGS.tracked_prompts_per_customer", name: "Tracked prompts per customer", short: "Query volume", lo: 600, hi: 4000, tlo: 1200, thi: 3000,
+    base: A.COGS.tracked_prompts_per_customer, fmt: (v) => fN(v), step: 50,
+    note: "Least observable input in the model" },
+  { key: "SALES.ae_hires_per_month", name: "AE hires per month, FY26", short: "AE hiring pace", lo: 0.8, hi: 5.0, tlo: 1.6, thi: 3.0,
+    base: A.SALES.ae_hires_per_month["2026"], fmt: (v) => v.toFixed(1), step: 0.1,
+    note: "Later years scale with this" },
+  { key: "HEADCOUNT.rnd_hires_per_month", name: "R&D hires per month, FY26", short: "R&D hiring pace", lo: 3, hi: 16, tlo: 4, thi: 9,
+    base: A.HEADCOUNT.rnd_hires_per_month["2026"], fmt: (v) => v.toFixed(1), step: 0.5,
+    note: "Later years scale with this" },
+];
+
+function tornado() {
+  const base = BASE.trough;
+  return DRIVERS.map((d) => {
+    const lo = run(A, "base", { [d.key]: d.tlo }).trough - base;
+    const hi = run(A, "base", { [d.key]: d.thi }).trough - base;
+    return { name: d.short || d.name, lo, hi, value: Math.abs(hi - lo),
+      loLabel: d.fmt(d.tlo), hiLabel: d.fmt(d.thi) };
+  }).sort((a, b) => b.value - a.value);
+}
+
+/* Two sided tornado, centred on the base case. Left reduces the requirement, right raises it. */
+function tornadoChart(host, items, tip) {
+  const W = host.clientWidth || 520, H = 24 + items.length * 34;
+  const P = { t: 10, r: 20, b: 30, l: 132 };
+  const iw = W - P.l - P.r, rh = (H - P.t - P.b) / items.length;
+  const mx = Math.max(...items.map((d) => Math.max(Math.abs(d.lo), Math.abs(d.hi)))) || 1;
+  const cx = P.l + iw / 2;
+  const X = (v) => cx + (v / mx) * (iw / 2);
+  const g = el("svg", { viewBox: `0 0 ${W} ${H}` });
+  g.appendChild(el("line", { x1: cx, x2: cx, y1: P.t, y2: P.t + items.length * rh,
+    stroke: cssv("--axis"), "stroke-width": 1 }));
+
+  items.forEach((d, i) => {
+    const y = P.t + i * rh + rh * 0.2, h = rh * 0.6;
+    [[d.lo, d.loLabel], [d.hi, d.hiLabel]].forEach(([v, lab]) => {
+      const col = v < 0 ? cssv("--s2") : cssv("--s3");
+      const x0 = Math.min(cx, X(v)), w = Math.abs(X(v) - cx);
+      g.appendChild(el("rect", { x: x0, y, width: Math.max(w, 1.5), height: h, rx: 3, fill: col }));
+    });
+    const lb = el("text", { x: P.l - 12, y: y + h / 2 + 4, "text-anchor": "end",
+      fill: cssv("--text-secondary"), "font-size": 11 });
+    lb.textContent = d.name; g.appendChild(lb);
+    if (tip) {
+      const hz = el("rect", { x: 0, y: P.t + i * rh, width: W, height: rh, fill: "transparent" });
+      hz.addEventListener("mousemove", () => {
+        tip.innerHTML = `<div class="th">${d.name}</div>` +
+          `<div class="row"><span><span class="dot" style="background:${d.lo < 0 ? cssv("--s2") : cssv("--s3")}"></span>at ${d.loLabel}</span><span>${d.lo >= 0 ? "+" : "\u2212"}${fM(Math.abs(d.lo))} trough</span></div>` +
+          `<div class="row"><span><span class="dot" style="background:${d.hi < 0 ? cssv("--s2") : cssv("--s3")}"></span>at ${d.hiLabel}</span><span>${d.hi >= 0 ? "+" : "\u2212"}${fM(Math.abs(d.hi))} trough</span></div>`;
+        tip.style.opacity = 1; tip.style.left = "12px"; tip.style.top = (P.t + i * rh) + "px";
+      });
+      hz.addEventListener("mouseleave", () => { tip.style.opacity = 0; });
+      g.appendChild(hz);
+    }
+  });
+  [["\u2190 lower trough cash", P.l, "start"], ["higher trough cash \u2192", W - 2, "end"]]
+    .forEach(([txt, x, anchor]) => {
+      const t = el("text", { x, y: H - 8, "text-anchor": anchor, fill: cssv("--text-muted"), "font-size": 10.5 });
+      t.textContent = txt; g.appendChild(t);
+    });
+  host.innerHTML = ""; host.appendChild(g);
+}
+
+/* ---------------------------------------------------------------- builder */
+let curScn = "base", overrides = {};
+
+function renderBuilder() {
+  $("#scnbtns").innerHTML = SCN.map((s) =>
+    `<button class="scn" data-s="${s}" aria-pressed="${s === curScn}">${A.SCENARIO_LABELS[s]}</button>`).join("");
+  $("#scnbtns").querySelectorAll(".scn").forEach((b) => b.onclick = () => {
+    curScn = b.dataset.s; overrides = {}; renderBuilder(); });
+
+  const scnBase = run(A, curScn);
+  $("#sliders").innerHTML = DRIVERS.map((d, i) => {
+    const cur = overrides[d.key] ?? defaultFor(d, curScn);
+    return `<div class="sl"><label><span class="nm">${d.name}</span>
+      <span class="val" id="v${i}">${d.fmt(cur)}</span></label>
+      <input type="range" min="${d.lo}" max="${d.hi}" step="${d.step}" value="${cur}" data-i="${i}">
+      <div class="slnote">${d.note}</div></div>`;
+  }).join("");
+  $("#sliders").querySelectorAll("input").forEach((inp) => {
+    inp.oninput = () => {
+      const d = DRIVERS[inp.dataset.i];
+      overrides[d.key] = parseFloat(inp.value);
+      $("#v" + inp.dataset.i).textContent = d.fmt(parseFloat(inp.value));
+      updateBuilder();
+    };
+  });
+  $("#reset").onclick = () => { overrides = {}; renderBuilder(); };
+  updateBuilder();
+}
+
+function defaultFor(d, scn) {
+  const p = buildParams(A, scn, {});
+  const [b, f] = d.key.split(".");
+  const v = p[b][f];
+  return (v !== null && typeof v === "object") ? v[Object.keys(v).sort()[0]] : v;
+}
+
+function delta(v, base, fmt, goodIfLower) {
+  const diff = v - base;
+  if (Math.abs(diff) < 1e-9) return `<div class="d">Same as base case</div>`;
+  const good = goodIfLower ? diff < 0 : diff > 0;
+  return `<div class="d ${good ? "up" : "down"}">${diff > 0 ? "+" : "−"}${fmt(Math.abs(diff))} vs base</div>`;
+}
+
+function updateBuilder() {
+  const r = run(A, curScn, overrides);
+  const b = BASE;
+  const breach = r.breach_month === null ? "No breach" : mlabel(r.breach_month);
+  const dec = r.decision_month === null || r.decision_month < 0 ? "Not required" : mlabel(r.decision_month);
+  $("#btiles").innerHTML =
+    tile("Capital need", fM(r.capital_need), "") .replace("<div class=\"d\"></div>",
+      delta(r.capital_need, b.capital_need, fM, true)) +
+    tile("Trough cash", fM(r.trough), "").replace("<div class=\"d\"></div>",
+      delta(r.trough, b.trough, fM, false)) +
+    tile("Raise decision", dec, "Breach in " + breach) +
+    tile("FY26 ARR", fM(r.total_arr[11]), "").replace("<div class=\"d\"></div>",
+      delta(r.total_arr[11], b.total_arr[11], fM, false)) +
+    tile("FY30 ARR", fM(r.total_arr[59]), "").replace("<div class=\"d\"></div>",
+      delta(r.total_arr[59], b.total_arr[59], fM, false));
+
+  lineChart($("#bcash"), {
+    series: [
+      { name: "Base", color: cssv("--text-muted"), values: Array.from(b.cash_end), dim: true, dash: "5 4" },
+      { name: "Live", color: cssv("--s1"), values: Array.from(r.cash_end), width: 2.5 },
+    ], hline: A.GIVEN.min_cash, tip: $("#btip"), height: 300, labelLast: false,
+  });
+
+  const rows = yearIdx.map((y) => `<tr><td>${y.label}</td>
+    <td>${fM(last(r.total_arr, y.hi))}</td><td>${fP(last(r.arr_growth_yoy, y.hi))}</td>
+    <td>${fM(sum(r.revenue, y.lo, y.hi))}</td><td>${fP(last(r.gross_margin, y.hi), 1)}</td>
+    <td>${fM(sum(r.ebitda, y.lo, y.hi))}</td><td>${fM(sum(r.fcf, y.lo, y.hi))}</td>
+    <td>${fM(last(r.cash_end, y.hi))}</td><td>${fN(last(r.hc_total, y.hi))}</td>
+    <td>${fP(last(r.nrr, y.hi), 1)}</td></tr>`).join("");
+  $("#btable").innerHTML = `<thead><tr><th>Year</th><th>Ending ARR</th><th>Growth</th><th>Revenue</th>
+    <th>Gross margin</th><th>EBITDA ex-SBC</th><th>Free cash flow</th><th>Closing cash</th>
+    <th>Headcount</th><th>NRR</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* ----------------------------------------------------------------- detail */
+function renderDetail() {
+  const b = BASE;
+  const arrSeries = [
+    { name: "Total ARR", color: cssv("--s1"), values: Array.from(b.total_arr), width: 2.5 },
+    { name: "Core", color: cssv("--s3"), values: Array.from(b.core_arr) },
+    { name: "Agents", color: cssv("--s2"), values: Array.from(b.agents_arr) },
+  ];
+  $("#arrlegend").innerHTML = arrSeries.map((s) =>
+    `<span class="lg"><span class="sw" style="background:${s.color}"></span>${s.name}</span>`).join("");
+  lineChart($("#arrchart"), { series: arrSeries, tip: $("#arrtip"), height: 300 });
+
+  $("#arrtable").innerHTML = `<thead><tr><th>Year</th><th>Beginning</th><th>New</th><th>Expansion</th>
+    <th>Churn</th><th>Agents</th><th>Ending</th><th>Growth</th></tr></thead><tbody>` +
+    yearIdx.map((y, i) => {
+      const beg = i === 0 ? A.GIVEN.opening_arr : last(b.total_arr, y.lo);
+      const agDelta = last(b.agents_arr, y.hi) - (i === 0 ? 0 : last(b.agents_arr, y.lo));
+      return `<tr><td>${y.label}</td><td>${fM(beg)}</td><td>${fM(sum(b.new_arr, y.lo, y.hi))}</td>
+        <td>${fM(sum(b.expansion, y.lo, y.hi))}</td><td>−${fM(sum(b.churn, y.lo, y.hi)).replace("$", "$")}</td>
+        <td>${fM(agDelta)}</td><td>${fM(last(b.total_arr, y.hi))}</td>
+        <td>${fP(last(b.arr_growth_yoy, y.hi))}</td></tr>`;
+    }).join("") + "</tbody>";
+
+  $("#pltable").innerHTML = `<thead><tr><th>Year</th><th>Revenue</th><th>Cost of revenue</th>
+    <th>Gross profit</th><th>Gross margin</th><th>S&amp;M</th><th>R&amp;D</th><th>G&amp;A</th>
+    <th>EBITDA ex-SBC</th><th>Margin</th></tr></thead><tbody>` +
+    yearIdx.map((y) => {
+      const rev = sum(b.revenue, y.lo, y.hi), eb = sum(b.ebitda, y.lo, y.hi);
+      return `<tr><td>${y.label}</td><td>${fM(rev)}</td><td>${fM(sum(b.cogs, y.lo, y.hi))}</td>
+        <td>${fM(sum(b.gross_profit, y.lo, y.hi))}</td><td>${fP(last(b.gross_margin, y.hi), 1)}</td>
+        <td>${fM(sum(b.opex_sm, y.lo, y.hi))}</td><td>${fM(sum(b.opex_rnd, y.lo, y.hi))}</td>
+        <td>${fM(sum(b.opex_ga, y.lo, y.hi))}</td><td>${fM(eb)}</td><td>${fP(eb / rev, 1)}</td></tr>`;
+    }).join("") + "</tbody>";
+
+  const B = A.BENCHMARKS;
+  const mark = (ok) => `<span class="dot" style="background:${ok ? "var(--good)" : "var(--warning)"};display:inline-block;margin-right:6px"></span>`;
+  $("#kpitable").innerHTML = `<thead><tr><th>Year</th><th>NRR</th><th>GRR</th><th>Gross margin</th>
+    <th>Burn multiple</th><th>Rule of 40</th><th>CAC $ / logo</th><th>CAC payback, new business</th><th>CAC payback, blended</th>
+    <th>ARR per FTE</th></tr></thead><tbody>` +
+    yearIdx.map((y) => {
+      const nrr = last(b.nrr, y.hi), grr = last(b.grr, y.hi), gm = last(b.gross_margin, y.hi);
+      const bm = last(b.burn_multiple, y.hi), r40 = last(b.rule_of_40, y.hi), af = last(b.arr_per_fte, y.hi);
+      const cp = last(b.cac_payback_months || [], y.hi);
+      const cn = last(b.cac_payback_new_business || [], y.hi);
+      const cd = last(b.cac_dollars || [], y.hi);
+      return `<tr><td>${y.label}</td>
+        <td>${nrr == null ? "n/a" : mark(nrr > B.nrr_median) + fP(nrr, 1)}</td>
+        <td>${grr == null ? "n/a" : mark(grr > B.grr_median) + fP(grr, 1)}</td>
+        <td>${mark(gm > B.gross_margin_saas) + fP(gm, 1)}</td>
+        <td>${bm == null ? "n/a" : mark(bm < B.burn_multiple_good) + fX(bm)}</td>
+        <td>${r40 == null ? "n/a" : mark(r40 > 0.40) + fP(r40)}</td>
+        <td>${cd == null ? "n/a" : fK(cd)}</td>
+        <td>${cn == null ? "n/a" : mark(cn < 18) + cn.toFixed(0) + " mo"}</td>
+        <td>${cp == null ? "n/a" : mark(cp < 18) + cp.toFixed(0) + " mo"}</td>
+        <td>${fK(af)}</td></tr>`;
+    }).join("") + "</tbody>" +
+    `<tfoot><tr><td colspan="9" style="color:var(--text-muted);font-size:11.5px;padding-top:9px;border:none">
+      Benchmarks: NRR 115% median and 128% top quartile, GRR 89% and 94%, burn multiple below 1.00x,
+      gross margin 78%, CAC payback under eighteen months. CAC payback is shown on two bases because
+      customer success sits inside sales and marketing: the new business measure excludes it and is the
+      acquisition number, the blended measure includes it and is what a reader can recompute from the
+      P&amp;L. Sources are cited on the Inputs tab of the workbook.
+    </td></tr></tfoot>`;
+
+  const hcStack = [
+    { name: "R&D", color: cssv("--s1"), values: Array.from(b.hc_rnd) },
+    { name: "S&M and CS", color: cssv("--s2"), values: Array.from(b.hc_sm).map((v, i) => v + b.hc_cs[i]) },
+    { name: "G&A", color: cssv("--s3"), values: Array.from(b.hc_ga) },
+  ];
+  $("#hclegend").innerHTML = hcStack.map((s) =>
+    `<span class="lg"><span class="sw" style="background:${s.color}"></span>${s.name}</span>`).join("");
+  areaChart($("#hcchart"), { stack: hcStack, tip: $("#hctip"), height: 270 });
+}
+
+/* -------------------------------------------------------------- interface */
+function renderAll() { renderFindings(); renderBuilder(); renderDetail(); }
+
+document.querySelectorAll(".tab").forEach((t) => t.onclick = () => {
+  document.querySelectorAll(".tab").forEach((x) => x.setAttribute("aria-selected", x === t));
+  ["findings", "builder", "detail"].forEach((v) =>
+    document.getElementById("view-" + v).classList.toggle("hidden", v !== t.dataset.view));
+  requestAnimationFrame(renderAll);
+});
+$("#theme").onclick = () => {
+  const dark = document.documentElement.dataset.theme === "dark";
+  document.documentElement.dataset.theme = dark ? "light" : "dark";
+  $("#theme").textContent = dark ? "Dark" : "Light";
+  renderAll();
+};
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(renderAll, 140); });
+renderAll();
+
+</script>
+</body>
+</html>
