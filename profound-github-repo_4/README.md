@@ -1,6 +1,6 @@
 # Profound — Five Year Operating Model
 
-**Live dashboard:** https://lionsay.github.io/profound-operating-model/
+**Live dashboard:** https://lionsay.github.io/profound-case/
 
 A monthly operating model for Profound, January 2026 through December 2030, built from the four
 assumptions given in the exercise: $55M ARR, $110M cash, 250 employees, and a $25M minimum cash balance.
