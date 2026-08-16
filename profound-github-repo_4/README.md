@@ -34,9 +34,6 @@ an investor. The necessity gate, eighteen months ahead of the base case breach i
 2027. Raising at the first tells the story that growth is compounding and the round funds capturing more
 of it. Raising at the second tells the story that the round extends runway.
 
-Burn multiple is deliberately not part of the gate. It never exceeds 1.0x anywhere in the model, so it
-would confirm rather than test. It also reads low for a specific reason: it is a cash metric, and annual
-prepay suppresses cash burn, so it is flattered by float as much as by margin.
 
 ## The finding underneath it
 
