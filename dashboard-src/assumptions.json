@@ -1,0 +1,379 @@
+{
+ "GIVEN": {
+  "opening_arr": 55000000.0,
+  "opening_cash": 110000000.0,
+  "opening_headcount": 250,
+  "min_cash": 25000000.0
+ },
+ "TIME": {
+  "start_year": 2026,
+  "start_month": 1,
+  "months": 60,
+  "fy_start_month": 1
+ },
+ "OPENING_BASE": {
+  "ent_arr": 53500000.0,
+  "ent_customers": 700,
+  "selfserve_arr": 1500000.0,
+  "selfserve_customers": 500,
+  "agents_arr": 0.0
+ },
+ "SALES": {
+  "opening_aes": 30,
+  "opening_sdrs": 20,
+  "opening_mktg": 13,
+  "opening_salesops": 8,
+  "quota_annual": 1300000.0,
+  "attainment": 0.78,
+  "quota_growth_pa": -0.05,
+  "ramp_months_by_year": {
+   "2026": 4,
+   "2027": 4,
+   "2028": 5,
+   "2029": 5,
+   "2030": 5
+  },
+  "ramp_curve": [
+   0.25,
+   0.5,
+   0.75,
+   1.0
+  ],
+  "ramp_curve_5mo": [
+   0.2,
+   0.4,
+   0.6,
+   0.8,
+   1.0
+  ],
+  "time_to_hire_months": 2,
+  "ae_hires_per_month": {
+   "2026": 2.2,
+   "2027": 2.6,
+   "2028": 2.8,
+   "2029": 2.6,
+   "2030": 2.2
+  },
+  "sdr_per_ae": 0.8,
+  "mktg_per_ae": 0.45,
+  "salesops_per_ae": 0.3,
+  "enablement_heads_per_20_aes": 1.0
+ },
+ "RETENTION": {
+  "opening_base_spread_months": 12,
+  "first_renewal_survival": 0.92,
+  "later_renewal_survival": {
+   "2026": 0.95,
+   "2027": 0.95,
+   "2028": 0.955,
+   "2029": 0.96,
+   "2030": 0.96
+  },
+  "in_contract_churn_pa": 0.005,
+  "seat_expansion_pa": {
+   "2026": 0.22,
+   "2027": 0.16,
+   "2028": 0.1,
+   "2029": 0.065,
+   "2030": 0.045
+  },
+  "renewal_price_uplift": 0.08,
+  "cross_sell_uplift": {
+   "2026": 0.11,
+   "2027": 0.08,
+   "2028": 0.05,
+   "2029": 0.035,
+   "2030": 0.025
+  },
+  "logo_churn_premium": 0.03
+ },
+ "ACV": {
+  "ent_new_logo_acv": 76428.57,
+  "ent_acv_growth_pa": 0.1,
+  "selfserve_acv": 3000.0,
+  "selfserve_acv_growth_pa": 0.05
+ },
+ "SELFSERVE": {
+  "new_customers_per_month": 45,
+  "new_cust_growth_pa": 0.25,
+  "monthly_churn": 0.04,
+  "monthly_conv_to_ent": 0.01
+ },
+ "AGENTS": {
+  "attach_by_yearend": {
+   "2026": 0.08,
+   "2027": 0.18,
+   "2028": 0.3,
+   "2029": 0.38,
+   "2030": 0.45
+  },
+  "acv_pct_of_core": 0.45,
+  "acv_growth_pa": 0.12,
+  "billed_in_arrears": true
+ },
+ "COGS": {
+  "tracked_prompts_per_customer": 2000,
+  "engines_monitored": 10,
+  "runs_per_prompt_per_month": 30,
+  "query_volume_growth_pa": 0.15,
+  "cost_per_query": 0.0012,
+  "inference_deflation_pa": 0.22,
+  "agents_cogs_pct": {
+   "2026": 0.4,
+   "2027": 0.37,
+   "2028": 0.34,
+   "2029": 0.32,
+   "2030": 0.3
+  },
+  "selfserve_cogs_pct": 0.25,
+  "hosting_pct_of_rev": {
+   "2026": 0.06,
+   "2027": 0.055,
+   "2028": 0.05,
+   "2029": 0.045,
+   "2030": 0.04
+  },
+  "third_party_data_pct_of_rev": 0.02,
+  "cs_in_cogs": false
+ },
+ "HEADCOUNT": {
+  "opening_split": {
+   "rnd": 100,
+   "sm": 75,
+   "cs": 45,
+   "ga": 30
+  },
+  "loaded_cost": {
+   "rnd": 288000.0,
+   "ae": 323000.0,
+   "sdr": 161000.0,
+   "mktg": 217000.0,
+   "salesops": 205000.0,
+   "cs": 182000.0,
+   "ga": 201000.0
+  },
+  "comp_inflation_pa": 0.04,
+  "attrition_sales_pa": 0.2,
+  "attrition_nonsales_pa": 0.08,
+  "recruiting_cost_per_hire": 22000.0,
+  "rnd_hires_per_month": {
+   "2026": 6.0,
+   "2027": 8.0,
+   "2028": 8.5,
+   "2029": 8.5,
+   "2030": 8.0
+  },
+  "ga_hires_per_month": {
+   "2026": 2.2,
+   "2027": 3.0,
+   "2028": 3.5,
+   "2029": 3.5,
+   "2030": 3.0
+  },
+  "ent_custs_per_csm": {
+   "2026": 13,
+   "2027": 12,
+   "2028": 11,
+   "2029": 11,
+   "2030": 10
+  },
+  "sbc_pct_of_revenue": 0.15
+ },
+ "OPEX": {
+  "software_per_head_pa": 12000.0,
+  "te_per_head_pa": 6000.0,
+  "other_ga_per_head_pa": 3000.0,
+  "facilities_per_head_pa": 18000.0,
+  "office_step_at_headcount": 400,
+  "office_step_cost_pa": 3000000.0,
+  "rnd_compute_pct_of_rev": {
+   "2026": 0.05,
+   "2027": 0.055,
+   "2028": 0.055,
+   "2029": 0.05,
+   "2030": 0.045
+  },
+  "marketing_programs_pct_of_rev": 0.08,
+  "professional_fees_pa": 2500000.0,
+  "professional_fees_growth_pa": 0.15,
+  "insurance_pa": 1200000.0,
+  "insurance_growth_pa": 0.1
+ },
+ "CASH": {
+  "annual_upfront_pct": 0.65,
+  "quarterly_pct": 0.35,
+  "dso_days": 45,
+  "dpo_days": 30,
+  "bad_debt_pct": 0.005,
+  "capex_per_new_hire": 4000.0,
+  "leasehold_at_office_step": 4000000.0,
+  "capitalise_software": false,
+  "interest_rate_on_cash": 0.04,
+  "bonus_payout_month": 3
+ },
+ "FUNDRAISE": {
+  "process_launch_at_runway_months": 18,
+  "milestone_arr": 100000000.0,
+  "milestone_burn_multiple": 1.0,
+  "target_post_raise_runway_months": 24,
+  "illustrative_round_size": 200000000.0,
+  "illustrative_post_money": 3000000000.0,
+  "ambition_growth": {
+   "2026": 1.0,
+   "2027": 0.7,
+   "2028": 0.5,
+   "2029": 0.38,
+   "2030": 0.3
+  }
+ },
+ "SCENARIOS": {
+  "base": {},
+  "upside": {
+   "SALES.attainment": 0.85,
+   "SALES.ae_hires_per_month": {
+    "2026": 4.0,
+    "2027": 5.2,
+    "2028": 5.8,
+    "2029": 5.8,
+    "2030": 5.2
+   },
+   "RETENTION.first_renewal_survival": 0.94,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.27,
+    "2027": 0.21,
+    "2028": 0.135,
+    "2029": 0.09,
+    "2030": 0.06
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.1,
+    "2027": 0.24,
+    "2028": 0.38,
+    "2029": 0.47,
+    "2030": 0.55
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 8.5,
+    "2027": 11.0,
+    "2028": 12.0,
+    "2029": 12.0,
+    "2030": 11.0
+   }
+  },
+  "downside": {
+   "SALES.attainment": 0.74,
+   "SALES.ae_hires_per_month": {
+    "2026": 2.2,
+    "2027": 2.6,
+    "2028": 2.8,
+    "2029": 2.6,
+    "2030": 2.2
+   },
+   "RETENTION.first_renewal_survival": 0.885,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.185,
+    "2027": 0.13,
+    "2028": 0.08,
+    "2029": 0.05,
+    "2030": 0.035
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.05,
+    "2027": 0.11,
+    "2028": 0.18,
+    "2029": 0.23,
+    "2030": 0.27
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 6.0,
+    "2027": 8.0,
+    "2028": 8.5,
+    "2029": 8.5,
+    "2030": 8.0
+   }
+  },
+  "downside_with_freeze": {
+   "SALES.attainment": 0.74,
+   "SALES.ae_hires_per_month": {
+    "2026": 2.2,
+    "2027": 1.0,
+    "2028": 0.8,
+    "2029": 0.8,
+    "2030": 0.8
+   },
+   "RETENTION.first_renewal_survival": 0.885,
+   "RETENTION.seat_expansion_pa": {
+    "2026": 0.185,
+    "2027": 0.13,
+    "2028": 0.08,
+    "2029": 0.05,
+    "2030": 0.035
+   },
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.05,
+    "2027": 0.11,
+    "2028": 0.18,
+    "2029": 0.23,
+    "2030": 0.27
+   },
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 6.0,
+    "2027": 2.5,
+    "2028": 2.0,
+    "2029": 2.0,
+    "2030": 2.0
+   },
+   "HEADCOUNT.ga_hires_per_month": {
+    "2026": 2.2,
+    "2027": 0.8,
+    "2028": 0.5,
+    "2029": 0.5,
+    "2030": 0.5
+   },
+   "HEADCOUNT.ent_custs_per_csm": {
+    "2026": 13,
+    "2027": 15,
+    "2028": 16,
+    "2029": 16,
+    "2030": 16
+   }
+  },
+  "agents_led": {
+   "AGENTS.attach_by_yearend": {
+    "2026": 0.14,
+    "2027": 0.35,
+    "2028": 0.55,
+    "2029": 0.7,
+    "2030": 0.8
+   },
+   "AGENTS.acv_pct_of_core": 0.8,
+   "AGENTS.acv_growth_pa": 0.18,
+   "HEADCOUNT.rnd_hires_per_month": {
+    "2026": 8.0,
+    "2027": 10.5,
+    "2028": 11.5,
+    "2029": 11.5,
+    "2030": 10.5
+   }
+  }
+ },
+ "SCENARIO_LABELS": {
+  "base": "Base",
+  "upside": "Upside",
+  "downside": "Downside",
+  "agents_led": "Agents-Led",
+  "downside_with_freeze": "Downside + Freeze"
+ },
+ "BENCHMARKS": {
+  "nrr_median": 1.15,
+  "nrr_top_quartile": 1.28,
+  "grr_median": 0.89,
+  "grr_top_quartile": 0.94,
+  "burn_multiple_good": 1.0,
+  "magic_number_low": 0.6,
+  "magic_number_high": 0.85,
+  "rule_of_40": 0.4,
+  "gross_margin_saas": 0.78,
+  "arr_per_fte_median": 200000.0
+ }
+}
