@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Profound — Operating Model</title>
+<title>Profound Operating Model</title>
 <style>
 :root{
   /* Dark is the default: Profound runs a near-black system, meta theme colour #08090A.
@@ -14,6 +14,7 @@
   --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181;
   --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
   --success-text:#0ca30c;
+  --answer-bg:rgba(57,135,229,0.10); --answer-border:rgba(57,135,229,0.30);
   --radius:12px;
   color-scheme:dark;
 }
@@ -23,6 +24,7 @@
   --grid:#e6e6e2; --axis:#c3c2b7; --border:rgba(8,9,10,0.10);
   --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4;
   --success-text:#006300;
+  --answer-bg:rgba(42,120,214,0.07); --answer-border:rgba(42,120,214,0.24);
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -73,7 +75,10 @@ h2{font-size:15.5px;margin:0 0 3px;font-weight:600;letter-spacing:-0.016em}
 .dot{width:7px;height:7px;border-radius:50%;flex:none}
 .up{color:var(--success-text)} .down{color:var(--critical)}
 
-.answer{border-left:3px solid var(--s1);padding-left:15px;margin:18px 0 0}
+.answer{
+  background:var(--answer-bg); border:1px solid var(--answer-border);
+  border-radius:var(--radius); padding:18px 20px; margin:18px 0 0;
+}
 .answer b{font-weight:650}
 
 .legend{display:flex;gap:15px;flex-wrap:wrap;margin:2px 0 10px}
@@ -132,7 +137,7 @@ svg{display:block;width:100%;height:auto;overflow:visible}
 <header class="top">
   <div class="top-inner">
     <div class="brandrow">
-      <h1>Profound — Five Year Operating Model</h1>
+      <h1>Profound Five Year Operating Model</h1>
       <span class="sub">Monthly, Jan 2026 to Dec 2030</span>
       <span class="spacer"></span>
       <button class="themebtn" id="theme">Dark</button>
@@ -187,10 +192,11 @@ svg{display:block;width:100%;height:auto;overflow:visible}
 
   <section>
     <h2>The sales investment window</h2>
-    <p class="lede">CAC payback on new business, base case. It clears the eighteen month benchmark
-      until mid 2027 and deteriorates from there as quota per rep decays and ramp lengthens. The
-      window in which adding sellers pays back inside the benchmark is finite, and it is what the
-      raise funds.</p>
+    <p class="lede">CAC payback, base case, on both bases. New business stays inside the eighteen month
+      benchmark for the full five years but deteriorates from 12 months to 18 as quota per rep decays
+      and ramp lengthens. Blended, which charges retention spend against new logos, crosses the
+      benchmark in mid 2027. The window in which adding sellers pays back comfortably is finite, and it
+      is what the raise funds.</p>
     <div class="card">
       <div class="legend" id="caclegend"></div>
       <div class="chartbox"><div id="cacchart"></div><div class="tip" id="cactip"></div></div>
@@ -275,27 +281,6 @@ svg{display:block;width:100%;height:auto;overflow:visible}
   An automated harness asserts the browser engine, the Python engine and the Excel workbook agree line by
   line across all sixty months and all five scenarios, to a tolerance of 0.1 per cent. The current tie-out
   is exact.</p>
-  <p><b>Burn multiple reads low, and it is worth knowing why.</b> It runs between 0.47x and 0.01x, well
-  inside the sub-1.0x standard. That is not primarily operating efficiency. Burn multiple is a cash
-  metric, and annual prepay suppresses cash burn, so the reading is flattered by float as much as by
-  margin. It also becomes undefined from November 2029, when trailing free cash flow turns positive and
-  there is no burn left to divide. Because it never exceeds 1.0x in this model, the burn multiple
-  condition in the raise gate confirms rather than tests: the binding gate is crossing $100M ARR.</p>
-  <p><b>Burn multiple reads low, and it is worth knowing why.</b> It runs between 0.47x and 0.01x, well
-  inside the sub-1.0x standard, and becomes undefined from November 2029 when trailing free cash flow
-  turns positive and there is no burn left to divide. The low reading is not primarily operating
-  efficiency: burn multiple is a cash metric, and annual prepay suppresses cash burn, so it is flattered
-  by float as much as by margin. Because it never exceeds 1.0x anywhere in this model it is deliberately
-  not part of the raise gate, which keys off crossing $100M ARR alone.</p>
-  <p><b>Agents is modelled as subscription-shaped, and it is not.</b> Attach rate times ACV gives Agents
-  a contracted ARR shape. A consumption product does not behave that way: revenue varies with usage
-  month to month, there is no contracted floor to retain, and the right metrics are net revenue retention
-  on consumed dollars and a usage ramp within each account rather than a logo attach rate. Billing in
-  arrears is modelled, which is the part that matters most for cash. The rest is a deliberate
-  simplification at this level and the first thing to build out properly.</p>
-  <p><b>Least observable input.</b> Query volume per customer is decomposed as tracked prompts times engines
-  times monthly runs. Across the plausible range the base case moves between no breach and a FY28 breach,
-  while the downside requirement stays between roughly $80M and $120M. The recommendation rests on the downside.</p>
 </div>
 
 </div>
@@ -681,7 +666,7 @@ const A = {
  }
 };
 /*
- * Profound Operating Model — browser engine.
+ * Profound Operating Model, browser engine.
  *
  * A faithful port of model.py, including the dollar cohort triangle. Not a
  * simplified summary: the sliders recompute the real model, so there is no band
@@ -1037,6 +1022,7 @@ function financials(p, years, coh, ag, ss, hc) {
            rev_agents: revAg, cogs, cogs_inference: cogsInf, gross_profit: gp,
            opex_sm: opexSm, opex_rnd: opexRnd, opex_ga: opexGa, opex_total: opexTotal,
            sbc, ebitda, capex, da, deferred, billings, interest, fcf,
+           d_deferred: dDef, d_ar: dAr, d_ap: dAp, bad_debt: badDebt,
            cash_beg: cashBeg, cash_end: cashEnd };
 }
 
@@ -1143,7 +1129,7 @@ function run(A, scenario = "base", overrides = {}) {
 
 </script>
 <script>
-/* Profound operating model — dashboard interaction and charts.
+/* Profound operating model, dashboard interaction and charts.
  * Charts are hand-built SVG so the page has no external dependencies. */
 
 const $ = (s) => document.querySelector(s);
@@ -1291,19 +1277,41 @@ function barChart(host, opts) {
       }
     });
   } else {
+    /* Vertical bars. With waterfall:true the intermediate bars float from the running
+     * cumulative, and bars flagged total:true are drawn from zero. The components must
+     * bridge the first total to the last; assertBridge() enforces that at build time. */
+    const { waterfall = false } = opts;
     const P = { t: 16, r: 12, b: 58, l: 58 };
     const iw = W - P.l - P.r, ih = H - P.t - P.b, bw = iw / items.length;
-    const vmax = Math.max(0, ...items.map((d) => d.value));
-    const vmin = Math.min(0, ...items.map((d) => d.value));
+
+    /* Resolve each bar to a [from, to] pair on the value axis. */
+    let running = 0;
+    const spans = items.map((d) => {
+      if (!waterfall || d.total) { running = d.value; return { from: 0, to: d.value }; }
+      const from = running; running += d.value; return { from, to: running };
+    });
+    const vmax = Math.max(0, ...spans.map((s) => Math.max(s.from, s.to)));
+    const vmin = Math.min(0, ...spans.map((s) => Math.min(s.from, s.to)));
     const span = (vmax - vmin) || 1;
     const zero = P.t + (vmax / span) * ih;
+    const Y = (v) => zero - (v / span) * ih;
+
     items.forEach((d, i) => {
-      const h = Math.abs(d.value) / span * ih;
+      const s = spans[i];
+      const yTop = Math.min(Y(s.from), Y(s.to)), h = Math.abs(Y(s.to) - Y(s.from));
       const x = P.l + i * bw + bw * 0.16, w = bw * 0.68;
-      const y = d.value >= 0 ? zero - h : zero;
-      g.appendChild(el("rect", { x, y, width: w, height: Math.max(h, 2), rx: 4, fill: d.color }));
-      const v = el("text", { x: x + w / 2, y: d.value >= 0 ? y - 8 : y + h + 15, "text-anchor": "middle",
-        fill: cssv("--text-primary"), "font-size": 11.5, "font-weight": 620 });
+      g.appendChild(el("rect", { x, y: yTop, width: w, height: Math.max(h, 2), rx: 4, fill: d.color }));
+
+      /* Connector from this bar's closing level to the next bar's opening level. */
+      if (waterfall && i < items.length - 1) {
+        g.appendChild(el("line", { x1: x + w, x2: P.l + (i + 1) * bw + bw * 0.16,
+          y1: Y(s.to), y2: Y(s.to), stroke: cssv("--axis"), "stroke-width": 1,
+          "stroke-dasharray": "2 3" }));
+      }
+      /* Label above the bar when it sits at or above the zero line, below it otherwise. */
+      const above = Y(s.to) <= zero;
+      const v = el("text", { x: x + w / 2, y: above ? yTop - 8 : yTop + h + 15,
+        "text-anchor": "middle", fill: cssv("--text-primary"), "font-size": 11.5, "font-weight": 620 });
       v.textContent = yFmt(d.value); g.appendChild(v);
       d.name.split("\n").forEach((line, k) => {
         const t = el("text", { x: x + w / 2, y: H - 30 + k * 13, "text-anchor": "middle",
@@ -1368,6 +1376,20 @@ function areaChart(host, opts) {
 /* ------------------------------------------------------------- aggregation */
 const yearIdx = [0, 1, 2, 3, 4].map((y) => ({ lo: y * 12, hi: y * 12 + 12, label: "FY" + (2026 + y) }));
 const sum = (a, lo, hi) => { let s = 0; for (let i = lo; i < hi; i++) s += a[i]; return s; };
+
+/* A waterfall that does not reconcile is worse than no waterfall, because it reads as
+ * arithmetic. The engine tie-out cannot see this: the series here are assembled in the
+ * display layer, not produced by the engine. So assert it where it is assembled. */
+function assertBridge(items, label) {
+  const first = items[0].value, last = items[items.length - 1].value;
+  const walk = items.slice(1, -1).reduce((s, d) => s + d.value, first);
+  const err = Math.abs(walk - last) / Math.max(Math.abs(last), 1);
+  if (err > 1e-6) {
+    const msg = `${label}: components sum to ${walk.toFixed(0)}, endpoint is ${last.toFixed(0)}`;
+    console.error(msg);
+    throw new Error(msg);
+  }
+}
 const last = (a, hi) => a[hi - 1];
 
 /* ------------------------------------------------------------------- tiles */
@@ -1444,20 +1466,26 @@ function renderFindings() {
     `<span class="lg"><span class="sw" style="background:var(--critical)"></span>$25M floor</span>`;
   lineChart($("#cashchart"), { series: cashSeries, hline: A.GIVEN.min_cash, tip: $("#cashtip"), height: 330 });
 
+  /* EBITDA ex-SBC to free cash flow. Stock compensation is deliberately absent: the
+   * opening bar already excludes it, so adding it back here would double count. Working
+   * capital, interest, capex and bad debt are the whole of the difference. */
   const N = 60;
-  const eb = sum(BASE.ebitda, 0, N), sbc = sum(BASE.sbc, 0, N);
-  const ddef = BASE.deferred[N - 1] - (A.GIVEN.opening_arr *
-    (A.CASH.annual_upfront_pct * 0.5 + A.CASH.quarterly_pct * 1.5 / 12));
-  const intr = sum(BASE.interest, 0, N), fcf = sum(BASE.fcf, 0, N);
-  barChart($("#bridgechart"), {
-    items: [
-      { name: "EBITDA\nex-SBC", value: eb, color: cssv("--critical") },
-      { name: "Stock\ncomp", value: sbc, color: cssv("--s3") },
-      { name: "Deferred\nrevenue", value: ddef, color: cssv("--s1") },
-      { name: "Interest\nincome", value: intr, color: cssv("--s3") },
-      { name: "Free cash\nflow", value: fcf, color: cssv("--s2") },
-    ], tip: $("#bridgetip"), height: 290,
-  });
+  const eb = sum(BASE.ebitda, 0, N);
+  const ddef = sum(BASE.d_deferred, 0, N), dar = sum(BASE.d_ar, 0, N);
+  const dap = sum(BASE.d_ap, 0, N), intr = sum(BASE.interest, 0, N);
+  const capex = sum(BASE.capex, 0, N), bad = sum(BASE.bad_debt, 0, N);
+  const fcf = sum(BASE.fcf, 0, N);
+  const bridge = [
+    { name: "EBITDA\nex-SBC", value: eb, total: true, color: cssv("--critical") },
+    { name: "Deferred\nrevenue", value: ddef, color: cssv("--s3") },
+    { name: "Accounts\nreceivable", value: -dar, color: cssv("--s2") },
+    { name: "Accounts\npayable", value: dap, color: cssv("--s3") },
+    { name: "Interest\nincome", value: intr, color: cssv("--s3") },
+    { name: "Capex and\nbad debt", value: -(capex + bad), color: cssv("--s2") },
+    { name: "Free cash\nflow", value: fcf, total: true, color: cssv("--s1") },
+  ];
+  assertBridge(bridge, "P&L burn to cash burn");
+  barChart($("#bridgechart"), { items: bridge, waterfall: true, tip: $("#bridgetip"), height: 290 });
 
   tornadoChart($("#tornado"), tornado(), $("#tortip"));
 
